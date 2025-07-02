@@ -9,6 +9,13 @@
 - One free retake included
 - Updated after November 25, 2024 with new topics like Gateway API, Helm, Kustomize, CRDs & Operators
 
+**CRITICAL EXAM ENVIRONMENT:**
+- Uses PSI Secure Browser (not your own browser)
+- NO bookmarks allowed - you can't prepare browser favorites
+- Only official Kubernetes docs + GitHub allowed
+- No notes, IDEs, search engines, or extra tabs
+- Must navigate documentation manually during exam
+
 **Exam Domains & Weightings:**
 The core domains are Storage, Troubleshooting, Workloads & Scheduling, Cluster Architecture, Services & Networking
 
@@ -230,12 +237,20 @@ kubectl run nginx --image=nginx $do > pod.yaml
 kubectl create deployment web --image=nginx $do > deploy.yaml
 ```
 
-### Documentation Navigation
-**Bookmark these sections:**
-- Pod spec: `kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#pod-v1-core`
-- Service spec: `kubernetes.io/docs/concepts/services-networking/service/`
-- NetworkPolicy: `kubernetes.io/docs/concepts/services-networking/network-policies/`
-- RBAC: `kubernetes.io/docs/reference/access-authn-authz/rbac/`
+### Documentation Navigation (NO BOOKMARKS ALLOWED!)
+**CRITICAL**: Since June 2022, you can't use pre-prepared bookmarks - the exam uses PSI Secure Browser
+
+**Practice navigating to these sections manually:**
+- Main docs: `kubernetes.io/docs/`
+- API reference: `kubernetes.io/docs/reference/`
+- Concepts: `kubernetes.io/docs/concepts/`
+- Tasks: `kubernetes.io/docs/tasks/`
+
+**Key navigation paths to memorize:**
+- Pod spec: Concepts → Workloads → Pods
+- Services: Concepts → Services and Networking → Service
+- NetworkPolicy: Concepts → Services and Networking → Network Policies
+- RBAC: Reference → API Access Control → RBAC
 
 **Quick kubectl explain:**
 ```bash
@@ -262,10 +277,11 @@ kubectl explain service.spec
 - Review and weakness identification
 
 ### Final Week Before Exam
-- 1 mock exam every other day
+- 1 mock exam every other day **using PSI Secure Browser conditions**
+- Practice manual documentation navigation (no bookmarks!)
 - Focus on weak areas identified
 - Speed optimization drills
-- Documentation navigation practice
+- **Daily practice**: Navigate to common docs sections under time pressure
 
 ---
 
