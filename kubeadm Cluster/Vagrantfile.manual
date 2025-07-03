@@ -1,0 +1,21 @@
+Vagrant.configure("2") do |config|
+  nodes = {
+    "kmaster"  => "192.168.56.10",
+    "kworker1" => "192.168.56.11",
+    "kworker2" => "192.168.56.12"
+  }
+
+  config.vm.box = "ubuntu/jammy64"
+
+  nodes.each do |name, ip|
+    config.vm.define name do |node|
+      node.vm.hostname = name
+      node.vm.network "private_network", ip: ip
+      node.vm.provider "virtualbox" do |vb|
+        vb.memory = 2048
+        vb.cpus = 2
+      end
+      # No provisioning, pure manual
+    end
+  end
+end
