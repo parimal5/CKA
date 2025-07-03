@@ -49,7 +49,7 @@ sudo kubeadm init --apiserver-advertise-address=192.168.56.10 --pod-network-cidr
 5. SSH into each worker node and join the cluster.
 6. Install CNI (e.g., Calico) from master.
 
-🛠️ Option 2: Manual Setup [Vagrantfile.manual](./Vagrantfile.manual)
+## 🛠️ Option 2: Manual Setup [Vagrantfile.manual](./Vagrantfile.manual)
 
 This setup:
 
