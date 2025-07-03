@@ -1,106 +1,223 @@
-# 🧪 Kubernetes Lab with Vagrant & VirtualBox
+# 🧪 Kubernetes v1.32 Lab Setup for CKA Practice
 
-This project provides two Vagrant-based environments for setting up a local multi-node Kubernetes cluster using `kubeadm` on Ubuntu 22.04 virtual machines.
+Two Vagrant environments for setting up a Kubernetes v1.32 cluster using `kubeadm` on Ubuntu 22.04 VMs.
+
+## Prerequisites
+
+- **VirtualBox** (6.1+)
+- **Vagrant** (2.2+)
+- **6GB RAM** available
+- **20GB free disk space**
+
+## Setup Options
+
+### Option 1: Pre-provisioned Setup
+
+**File:** `Vagrantfile`
+
+- Kubernetes tools pre-installed
+- Ready for `kubeadm init`
+
+### Option 2: Manual Setup
+
+**File:** `Vagrantfile.manual`
+
+- Clean VMs only
+- Install everything manually
 
 ---
 
-## 📁 Project Structure
+## 🚀 Pre-provisioned Setup
 
-```bash
-.
-├── Vagrantfile # Fully provisioned setup (auto install K8s tools)
-├── Vagrantfile.manual # Manual setup (clean OS only)
-└── README.md
-```
-
-## 🚀 Option 1: Provisioned Setup [Vagrantfile](./Vagrantfile)
-
-This setup:
-
-- Spins up 3 Ubuntu 22.04 VMs: `kmaster`, `kworker1`, `kworker2`
-- Automatically:
-  - Disables swap
-  - Installs `containerd`
-  - Installs `kubeadm`, `kubelet`, `kubectl`
-  - Prepares each node for Kubernetes
-
-### Usage:
+### 1. Start VMs
 
 ```bash
 vagrant up
 ```
 
-Once VMs are ready:
-
-1. SSH into master:
+### 2. Initialize Master
 
 ```bash
 vagrant ssh kmaster
+
+# Initialize cluster
+sudo kubeadm init --apiserver-advertise-address=192.168.56.10 --pod-network-cidr=10.244.0.0/16
+
+# Configure kubectl
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Install CNI
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+
+# Get join command
+kubeadm token create --print-join-command
 ```
 
-2. Run kubeadm init with networking:
+### 3. Join Workers
 
 ```bash
-sudo kubeadm init --apiserver-advertise-address=192.168.56.10 --pod-network-cidr=192.168.0.0/16
-```
-
-3. Set up kubectl config on master.
-4. Copy the kubeadm join command.
-5. SSH into each worker node and join the cluster.
-6. Install CNI (e.g., Calico) from master.
-
-## 🛠️ Option 2: Manual Setup [Vagrantfile.manual](./Vagrantfile.manual)
-
-This setup:
-
-- Spins up the same 3 VMs
-- Does NOT install anything
-- You must configure everything manually (ideal for CKA practice)
-
-Usage:
-
-```bash
-vagrant up --provider=virtualbox --vagrantfile=Vagrantfile.manual
-```
-
-Then SSH into each VM:
-
-```bash
-vagrant ssh kmaster
+# SSH into each worker and run join command
 vagrant ssh kworker1
+sudo <join-command>
+exit
+
 vagrant ssh kworker2
+sudo <join-command>
+exit
+```
+
+### 4. Verify
+
+```bash
+kubectl get nodes
+kubectl get pods -A
 ```
 
 ---
 
-## 🛠️ Manual Kubernetes Setup Checklist (For Vagrantfile.manual)
+## 🛠️ Manual Setup
 
-Follow these steps manually on the VMs after booting them via `vagrant up`:
+### 1. Start Clean VMs
 
-### 🔹 On All Nodes (Master & Workers)
+```bash
+vagrant up --vagrantfile=Vagrantfile.manual
+```
 
-- Disable swap
-- Remove swap entry from `/etc/fstab`
-- Load kernel modules: `overlay`, `br_netfilter`
-- Set sysctl parameters for Kubernetes networking
-- Install and configure container runtime (e.g., containerd)
-- Enable and start container runtime service
-- Add Kubernetes APT repository
-- Install Kubernetes tools: `kubelet`, `kubeadm`, `kubectl`
-- Hold package versions to prevent unintended upgrades
+### 2. Configure All Nodes (kmaster, kworker1, kworker2)
 
-### 🔹 On Master Node Only
+**Disable swap:**
 
-- Initialize the cluster using `kubeadm init`
-- Configure kubectl access using `admin.conf`
-- Install a CNI plugin (e.g., Calico or Flannel)
+```bash
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+```
 
-### 🔹 On Worker Nodes Only
+**Load kernel modules:**
 
-- Join the cluster using the `kubeadm join` command output from the master
+```bash
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
 
-### 🔹 Final Steps (On Master)
+sudo modprobe overlay
+sudo modprobe br_netfilter
+```
 
-- Check cluster status with `kubectl get nodes`
-- Verify pod network with `kubectl get pods -A`
-- Optionally deploy a test application to validate setup
+**Configure sysctl:**
+
+```bash
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sudo sysctl --system
+```
+
+**Install containerd:**
+
+```bash
+sudo apt update
+sudo apt install -y containerd
+
+# Configure containerd
+sudo mkdir -p /etc/containerd
+containerd config default | sudo tee /etc/containerd/config.toml
+
+# Enable SystemdCgroup
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+```
+
+**Add Kubernetes repository:**
+
+```bash
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl gpg
+
+# Add signing key
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+# Add repository
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+```
+
+**Install Kubernetes tools:**
+
+```bash
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+sudo systemctl enable kubelet
+```
+
+### 3. Initialize Master (kmaster only)
+
+```bash
+# Initialize cluster
+sudo kubeadm init --apiserver-advertise-address=192.168.56.10 --pod-network-cidr=10.244.0.0/16
+
+# Configure kubectl
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Install CNI
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+
+# Get join command
+kubeadm token create --print-join-command
+```
+
+### 4. Join Workers (kworker1, kworker2)
+
+```bash
+# Run join command from step 3
+sudo kubeadm join 192.168.56.10:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+```
+
+### 5. Verify Cluster
+
+```bash
+kubectl get nodes
+kubectl get pods -A
+kubectl cluster-info
+```
+
+---
+
+## Network Configuration
+
+| Node     | IP Address    |
+| -------- | ------------- |
+| kmaster  | 192.168.56.10 |
+| kworker1 | 192.168.56.11 |
+| kworker2 | 192.168.56.12 |
+
+- **Pod Network:** 10.244.0.0/16
+- **Service Network:** 10.96.0.0/12
+
+---
+
+## Common Commands
+
+```bash
+# Vagrant commands
+vagrant up
+vagrant ssh kmaster
+vagrant status
+vagrant halt
+vagrant destroy
+
+# Kubernetes commands
+kubectl get nodes
+kubectl get pods -A
+kubectl cluster-info
+kubeadm token create --print-join-command
+```
