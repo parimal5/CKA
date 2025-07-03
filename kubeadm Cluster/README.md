@@ -13,17 +13,19 @@ Two Vagrant environments for setting up a Kubernetes v1.32 cluster using `kubead
 
 ### Option 1: Pre-provisioned Setup
 
-**File:** `Vagrantfile`
+**File:** [`Vagrantfile`](./Vagrantfile)
 
 - Kubernetes tools pre-installed
 - Ready for `kubeadm init`
 
 ### Option 2: Manual Setup
 
-**File:** `Vagrantfile.manual`
+**File:** [`Vagrantfile.manual`](./Vagrantfile.manual)
 
 - Clean VMs only
 - Install everything manually
+
+> **NOTE:** For KIND Cluster setup, refer to [KindCluster](https://github.com/parimal5/k8s-architecture/tree/main/KindCluster)
 
 ---
 
