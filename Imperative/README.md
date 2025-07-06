@@ -24,7 +24,7 @@ kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=ngin
 
 ### Common Flags:
 
-- `--restart`=`Never`
+- `--restart`= `Always`(Default), `OnFailure`, `Never`
 - `--command -- sleep 3600`
 
 ## 🚢Deployment
@@ -68,7 +68,7 @@ kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc -
 
 - `--type` = `NodePort`, `LoadBalancer`, `ClusterIP` (Default)
 - `--labels` = `app=nginx-app`
-- `--protocol` = `TCP|UDP|SCTP`
+- `--protocol` = `TCP`, `UDP`, `SCTP`
 - `--tcp`=`<port>:<targetPort>`
 
 ### Note:
