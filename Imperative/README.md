@@ -1,21 +1,22 @@
 # CKA Exam - Essential Imperative Commands
 
-## Quick Note:
+## 📝Quick Note:
 
 Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest files and edit them when some flags are not supported.
 
-## Important Commands:
+## 🔧Important Commands:
 
 - `kubectl describe` - Get detailed information about resources
 - `kubectl explain` - Show resource documentation and field descriptions
 - `kubectl --help` - Get help for any command
+
   ```bash
   kubectl create svc --help
   kubectl expose deploy --help
   kubectl create service clusterip
   ```
 
-## Pod
+## 🚀Pod
 
 ```bash
 kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=nginx-app,env=prod"
@@ -26,7 +27,7 @@ kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=ngin
 - `--restart`=`Never`
 - `--command -- sleep 3600`
 
-## Deployment
+## 🚢Deployment
 
 ```bash
 kubectl create deployment my-dep --image=busybox --replicas=3 --port=80
@@ -43,7 +44,7 @@ kubectl set image my-dep busybox=busybox:1.35
 
 -
 
-## Service
+## 🌐Service
 
 ```bash
 kubectl create service clusterip my-svc --clusterip="10.25.0.2" --tcp=80:8080
