@@ -13,7 +13,7 @@ Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest file
   ```bash
   kubectl create svc --help
   kubectl expose deploy --help
-  kubectl create service clusterip
+  kubectl create service clusterip --help
   ```
 
 ## 🚀Pod
@@ -74,3 +74,13 @@ kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc -
 ### Note:
 
 - Can expose Pods, Deployments, RC, etc. using `kubectl expose`
+
+### To Create an pod and expose it at the same time
+
+Use the flag `--expose=true` If true, create a ClusterIP service associated with the pod. Requires `--port`(The port that this container exposes).
+
+```bash
+kubectl run pod my-pod --image=nginx --port=80 --expose=tue
+```
+
+> **Note**: The above command wil create the `POD` and a `Service` at the same time.
