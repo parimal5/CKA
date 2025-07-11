@@ -84,3 +84,52 @@ kubectl run pod my-pod --image=nginx --port=80 --expose=tue
 ```
 
 > **Note**: The above command wil create the `POD` and a `Service` at the same time.
+
+## Delete and recreate the Pod in single command from manifest file
+
+```bash
+kubectl replace --force -f pod.yaml
+```
+
+## Taints & Tolerations
+
+### Tainting a Node
+
+```bash
+kubectl taint nodes node-name key=value:effect
+```
+
+Where:
+
+- `effect` can be `NoSchedule`, `PreferNoSchedule`, or `NoExecute`
+
+**Important Flags:**
+
+- `-l, --selector`: Apply taint using label selector
+- `--all`: Apply to all nodes in the cluster
+
+### Adding Tolerations to Pods
+
+```yaml
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "database"
+    effect: "NoSchedule"
+```
+
+> **Note**: There are only 2 types of operators `Equal` and `Exists`
+
+### Removing Taints from a Node
+
+**Add a `-` at the end of the same command used for tainting:**
+
+```bash
+kubectl taint nodes workernode1 app=nginx:NoSchedule-
+```
+
+### Viewing Node Taints
+
+```bash
+kubectl describe nodes | grep -i Taints
+```
