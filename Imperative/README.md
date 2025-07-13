@@ -71,9 +71,7 @@ kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc -
 - `--protocol` = `TCP`, `UDP`, `SCTP`
 - `--tcp`=`<port>:<targetPort>`
 
-### Note:
-
-- Can expose Pods, Deployments, RC, etc. using `kubectl expose`
+> **Note**: Can expose Pods, Deployments, RC, etc. using `kubectl expose`
 
 ### To Create an pod and expose it at the same time
 
@@ -133,3 +131,60 @@ kubectl taint nodes workernode1 app=nginx:NoSchedule-
 ```bash
 kubectl describe nodes | grep -i Taints
 ```
+
+## Labels
+
+### Quick way to check node labels
+
+```bash
+kubectl get nodes --show-labels
+```
+
+### Adding a label
+
+```bash
+kubectl label node <node-name> <key>=<value>
+```
+
+### Removing the label
+
+```bash
+kubectl label node <node-name> <key>-
+```
+
+## Node Affinity
+
+### Types of Node Affinity
+
+1. **requiredDuringSchedulingIgnoredDuringExecution** - Hard requirement (pod won't schedule if no matching node)
+2. **preferredDuringSchedulingIgnoredDuringExecution** - Soft preference (scheduler tries but schedules anyway if no match)
+
+### 2. Add Node Affinity to Pod/Deployment
+
+```yaml
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: zone
+                operator: In
+                values:
+                  - east
+```
+
+## 3. Alternative: Simple nodeSelector (faster for basic needs)
+
+```yaml
+spec:
+  nodeSelector:
+    zone: east
+```
+
+## Common Operators
+
+- `In` - value in list
+- `NotIn` - value not in list
+- `Exists` - key exists
+- `DoesNotExist` - key doesn't exist
