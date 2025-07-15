@@ -24,14 +24,14 @@ Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest file
 kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=nginx-app,env=prod"
 ```
 
-### Common Flags:
+Common Flags:
 
 - `--restart`= `Always`(Default), `OnFailure`, `Never`
 - `--command -- sleep 3600`
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚢Deployment
+## 🚀Deployment
 
 ```bash
 kubectl create deployment my-dep --image=busybox --replicas=3 --port=80
@@ -46,7 +46,7 @@ kubectl set image my-dep busybox=busybox:1.35
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🌐Service
+## 🚀Service
 
 ```bash
 kubectl create service clusterip my-svc --clusterip="10.25.0.2" --tcp=80:8080
@@ -62,7 +62,7 @@ kubectl create service nodeport my-svc --node-port=30080 --tcp=80:8080
 
 > **Note**: The above commands create services when the target resources (POD, Deployments, RC etc.) are not created.
 
-### Common Flags:
+Common Flags:
 
 - `--type` = `NodePort`, `LoadBalancer`, `ClusterIP` (Default)
 - `--labels` = `app=nginx-app`
@@ -93,7 +93,7 @@ kubectl replace --force -f pod.yaml
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## Taints & Tolerations
+## 🚀Taints & Tolerations
 
 ### Tainting a Node
 
@@ -138,15 +138,15 @@ kubectl describe nodes | grep -i Taints
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## Labels
+## 🚀Labels
 
-### Quick way to check node labels
+### **Check node labels**
 
 ```bash
 kubectl get nodes --show-labels
 ```
 
-### **Adding a label**
+### **Adding a labels**
 
 ```bash
 kubectl label node <node-name> <key>=<value>
@@ -160,7 +160,7 @@ kubectl label node <node-name> <key>-
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## Node Affinity
+## 🚀Node Affinity
 
 ### Types of Node Affinity
 
@@ -182,7 +182,7 @@ spec:
                   - east
 ```
 
-### Common Operators
+Common Operators
 
 - `In` - value in list
 - `NotIn` - value not in list
@@ -191,7 +191,7 @@ spec:
 
 ---
 
-## Alternative: Simple **nodeSelector** (faster for basic needs)
+## Simple **nodeSelector**
 
 ```yaml
 spec:
@@ -201,11 +201,11 @@ spec:
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## Resources (Requests & Limits)
+## 🚀Resources (Requests & Limits)
 
 The `kubectl set` command provides a quick way to configure resource requests and limits for existing workloads like `Deployments`, `StatefulSets`, `DaemonSets` :
 
-#### Basic Usage:
+**Basic Usage:**
 
 First, create your resource using any method (`kubectl create` or YAML manifest), then apply resource configurations:
 
@@ -215,21 +215,19 @@ kubectl set resources deployment nginx-deploy \
   --requests=cpu=500m,memory=512Mi
 ```
 
-#### Limitations:
-
 > ⚠️ **Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
 
 ### **Working with Standalone Pods**
 
 Since Pods are immutable regarding their `spec.containers.resources`, you'll need to use the force replace method:
 
-#### **Step 1: Edit the Pod**
+**Step 1: Edit the Pod**
 
 ```bash
 kubectl edit pod <pod-name>
 ```
 
-#### **Step 2: Handle the Expected Error**
+**Step 2: Handle the Expected Error**
 
 When you modify resources, you'll encounter this error on save:
 
@@ -245,7 +243,7 @@ Edit cancelled, your changes have been saved to:
 /tmp/kubectl-edit-XXXX.yaml
 ```
 
-#### **Step 3: Force Replace**
+**Step 3: Force Replace**
 
 Apply your changes using the temporary file:
 
@@ -257,27 +255,27 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## LimitRange
+## 🚀LimitRange
 
 [LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/) provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads.
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## DaemonSet
+## 🚀DaemonSet
 
 DaemonSets cannot be created directly using imperative commands like `kubectl create` or `kubectl run`.
 
-### **Workaround: Generate from Deployment**
+**Workaround: Generate from Deployment**
 
 Since there's no direct imperative command for DaemonSet creation, use this approach:
 
-#### **Step 1: Generate Deployment YAML**
+**Step 1: Generate Deployment YAML**
 
 ```bash
 kubectl create deployment nginx-daemon --image=nginx --dry-run=client -o yaml > daemonset.yaml
 ```
 
-#### **Step 2: Modify the Generated YAML**
+**Step 2: Modify the Generated YAML**
 
 Edit the `daemonset.yaml` file and make these changes:
 
@@ -285,33 +283,10 @@ Edit the `daemonset.yaml` file and make these changes:
 - Remove the `replicas: 1` line
 - Remove the `strategy: {}` section
 
-#### **Step 3: Apply the DaemonSet**
+**Step 3: Apply the DaemonSet**
 
 ```bash
 kubectl apply -f daemonset.yaml
-```
-
-#### Example Result
-
-```yaml
-apiVersion: apps/v1
-kind: DaemonSet # Changed from Deployment
-metadata:
-  name: nginx-daemon
-spec:
-  # replicas: 1 <- Remove this line
-  selector:
-    matchLabels:
-      app: nginx-daemon
-  # strategy: {} <- Remove this section
-  template:
-    metadata:
-      labels:
-        app: nginx-daemon
-    spec:
-      containers:
-        - image: nginx
-          name: nginx
 ```
 
 > 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.
