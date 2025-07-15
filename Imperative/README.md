@@ -195,7 +195,7 @@ The `kubectl set` command provides a quick way to configure resource requests an
 
 #### Basic Usage
 
-First, create your resource using any method (`kubectl create`, `kubectl run`, or YAML manifest), then apply resource configurations:
+First, create your resource using any method (`kubectl create` or YAML manifest), then apply resource configurations:
 
 ```bash
 kubectl set resources deployment nginx-deploy \
@@ -246,3 +246,56 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 ## LimitRange
 
 LimitRange provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads. [more](https://kubernetes.io/docs/concepts/policy/limit-range/)
+
+## DaemonSet
+
+DaemonSets cannot be created directly using imperative commands like `kubectl create` or `kubectl run`.
+
+### Workaround: Generate from Deployment
+
+Since there's no direct imperative command for DaemonSet creation, use this approach:
+
+#### Step 1: Generate Deployment YAML
+
+```bash
+kubectl create deployment nginx-daemon --image=nginx --dry-run=client -o yaml > daemonset.yaml
+```
+
+#### Step 2: Modify the Generated YAML
+
+Edit the `daemonset.yaml` file and make these changes:
+
+- Change `kind: Deployment` → `kind: DaemonSet`
+- Remove the `replicas: 1` line
+- Remove the `strategy: {}` section
+
+#### Step 3: Apply the DaemonSet
+
+```bash
+kubectl apply -f daemonset.yaml
+```
+
+#### Example Result
+
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet # Changed from Deployment
+metadata:
+  name: nginx-daemon
+spec:
+  # replicas: 1 <- Remove this line
+  selector:
+    matchLabels:
+      app: nginx-daemon
+  # strategy: {} <- Remove this section
+  template:
+    metadata:
+      labels:
+        app: nginx-daemon
+    spec:
+      containers:
+        - image: nginx
+          name: nginx
+```
+
+> 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.
