@@ -75,7 +75,7 @@ kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc -
 
 > **Note**: Can expose Pods, Deployments, RC, etc. using `kubectl expose`
 
-### **To Create an pod and expose it at the same time**
+#### **To Create an pod and expose it at the same time**
 
 Use the flag `--expose=true` If true, create a ClusterIP service associated with the pod. Requires `--port`(The port that this container exposes).
 
@@ -85,7 +85,7 @@ kubectl run pod my-pod --image=nginx --port=80 --expose=tue
 
 > **Note**: The above command wil create the `POD` and a `Service` at the same time.
 
-### **Delete and recreate the Pod in single command from manifest file**
+#### **Delete and recreate the Pod in single command from manifest file**
 
 ```bash
 kubectl replace --force -f pod.yaml
@@ -95,7 +95,7 @@ kubectl replace --force -f pod.yaml
 
 ## 🚀Taints & Tolerations
 
-### Tainting a Node
+#### Tainting a Node
 
 ```bash
 kubectl taint nodes node-name key=value:effect
@@ -110,7 +110,7 @@ Where:
 - `-l, --selector`: Apply taint using label selector
 - `--all`: Apply to all nodes in the cluster
 
-### Adding Tolerations to Pods
+#### Adding Tolerations to Pods
 
 ```yaml
 tolerations:
@@ -122,7 +122,7 @@ tolerations:
 
 > **Note**: There are only 2 types of operators `Equal` and `Exists`
 
-### **Removing Taints from a Node**
+#### **Removing Taints from a Node**
 
 Add a `-` at the end of the same command used for tainting:
 
@@ -130,7 +130,7 @@ Add a `-` at the end of the same command used for tainting:
 kubectl taint nodes workernode1 app=nginx:NoSchedule-
 ```
 
-### **Viewing Node Taints**
+#### **Viewing Node Taints**
 
 ```bash
 kubectl describe nodes | grep -i Taints
@@ -140,19 +140,19 @@ kubectl describe nodes | grep -i Taints
 
 ## 🚀Labels
 
-### **Check node labels**
+#### **Check node labels**
 
 ```bash
 kubectl get nodes --show-labels
 ```
 
-### **Adding a labels**
+#### **Adding a labels**
 
 ```bash
 kubectl label node <node-name> <key>=<value>
 ```
 
-### **Removing the label**
+#### **Removing the label**
 
 ```bash
 kubectl label node <node-name> <key>-
@@ -162,12 +162,12 @@ kubectl label node <node-name> <key>-
 
 ## 🚀Node Affinity
 
-### Types of Node Affinity
+#### Types of Node Affinity
 
 1. `requiredDuringSchedulingIgnoredDuringExecution` - Hard requirement (pod won't schedule if no matching node)
 2. `preferredDuringSchedulingIgnoredDuringExecution` - Soft preference (scheduler tries but schedules anyway if no match)
 
-### Add Node Affinity to Pod/Deployment
+#### Add Node Affinity to Pod/Deployment
 
 ```yaml
 spec:
@@ -217,7 +217,7 @@ kubectl set resources deployment nginx-deploy \
 
 > ⚠️ **Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
 
-### **Working with Standalone Pods**
+#### **Working with Standalone Pods**
 
 Since Pods are immutable regarding their `spec.containers.resources`, you'll need to use the force replace method:
 
