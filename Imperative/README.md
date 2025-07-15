@@ -60,16 +60,16 @@ kubectl create service nodeport my-svc --node-port=30080 --tcp=80:8080
 
 > **Note**: The above commands create services when the target resources (POD, Deployments, RC etc.) are not created.
 
-```bash
-kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc --type=NodePort
-```
-
 ### Common Flags:
 
 - `--type` = `NodePort`, `LoadBalancer`, `ClusterIP` (Default)
 - `--labels` = `app=nginx-app`
 - `--protocol` = `TCP`, `UDP`, `SCTP`
 - `--tcp`=`<port>:<targetPort>`
+
+```bash
+kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc --type=NodePort
+```
 
 > **Note**: Can expose Pods, Deployments, RC, etc. using `kubectl expose`
 
@@ -156,10 +156,10 @@ kubectl label node <node-name> <key>-
 
 ### Types of Node Affinity
 
-1. **requiredDuringSchedulingIgnoredDuringExecution** - Hard requirement (pod won't schedule if no matching node)
-2. **preferredDuringSchedulingIgnoredDuringExecution** - Soft preference (scheduler tries but schedules anyway if no match)
+1. `requiredDuringSchedulingIgnoredDuringExecution` - Hard requirement (pod won't schedule if no matching node)
+2. `preferredDuringSchedulingIgnoredDuringExecution` - Soft preference (scheduler tries but schedules anyway if no match)
 
-### 2. Add Node Affinity to Pod/Deployment
+### Add Node Affinity to Pod/Deployment
 
 ```yaml
 spec:
@@ -174,7 +174,14 @@ spec:
                   - east
 ```
 
-## 3. Alternative: Simple nodeSelector (faster for basic needs)
+### Common Operators
+
+- `In` - value in list
+- `NotIn` - value not in list
+- `Exists` - key exists
+- `DoesNotExist` - key doesn't exist
+
+## Alternative: Simple nodeSelector (faster for basic needs)
 
 ```yaml
 spec:
@@ -182,9 +189,56 @@ spec:
     zone: east
 ```
 
-## Common Operators
+## Resources (Requests & Limits)
 
-- `In` - value in list
-- `NotIn` - value not in list
-- `Exists` - key exists
-- `DoesNotExist` - key doesn't exist
+The `kubectl set` command provides a quick way to configure resource requests and limits for existing workloads like `Deployments`, `StatefulSets`, `DaemonSets` :
+
+#### Basic Usage
+
+First, create your resource using any method (`kubectl create`, `kubectl run`, or YAML manifest), then apply resource configurations:
+
+```bash
+kubectl set resources deployment nginx-deploy \
+  --limits=cpu=1,memory=1Gi \
+  --requests=cpu=500m,memory=512Mi
+```
+
+#### Limitations
+
+> ⚠️ **Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
+
+### Working with Standalone Pods
+
+Since Pods are immutable regarding their `spec.containers.resources`, you'll need to use the force replace method:
+
+#### Step 1: Edit the Pod
+
+```bash
+kubectl edit pod <pod-name>
+```
+
+#### Step 2: Handle the Expected Error
+
+When you modify resources, you'll encounter this error on save:
+
+```bash
+Error from server (Invalid): Pod "mypod" is invalid:
+spec.containers[0].resources: Forbidden: may not be changed directly
+```
+
+The editor will save your changes to a temporary file:
+
+```bash
+Edit cancelled, your changes have been saved to:
+/tmp/kubectl-edit-XXXX.yaml
+```
+
+#### Step 3: Force Replace
+
+Apply your changes using the temporary file:
+
+```bash
+kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
+```
+
+> 💡 **Tip**: The `--force` flag deletes the existing Pod and recreates it with the new configuration, which will cause a brief downtime.
