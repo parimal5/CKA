@@ -242,3 +242,7 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 ```
 
 > 💡 **Tip**: The `--force` flag deletes the existing Pod and recreates it with the new configuration, which will cause a brief downtime.
+
+## LimitRange
+
+LimitRange provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads. [more](https://kubernetes.io/docs/concepts/policy/limit-range/)
