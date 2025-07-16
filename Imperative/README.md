@@ -297,34 +297,17 @@ kubectl apply -f daemonset.yaml
 
 Static PODs are managed directly by the kubelet on each node, bypassing the Kubernetes API server, scheduler, etcd, and controllers. This makes them useful for running critical system components that need to be available even when the control plane is unavailable.
 
-### Key Characteristics:
-
-- **Node-specific**: Each static POD runs on a specific node and cannot be moved to other nodes
-- **Kubelet-managed**: Created and managed solely by the kubelet process
-- **Pod-only**: Only POD resources can be created as static PODs (no Deployments, DaemonSets, ReplicaSets, etc.)
-- **Auto-restart**: If a static POD fails, the kubelet automatically restarts it
+**Key Characteristics:** Node-specific , Kubelet-managed , Pod-only (no Deployments, DaemonSets, ReplicaSets, etc.) , Auto-restart
 
 ### Default Configuration
 
-By default, the kubelet looks for static POD manifest files in the following directory:
-
-```bash
-/etc/kubernetes/manifests
-```
-
-The kubelet continuously monitors this directory and automatically creates PODs for any valid manifest files found there.
+By default, the kubelet looks for static POD manifest files in the following directory: `/etc/kubernetes/manifests`
 
 ### Configuring Static POD Path
 
-The static POD path can be customized by modifying the kubelet configuration file:
+The static POD path can be customized by modifying the kubelet configuration file: `/var/lib/kubelet/config.yaml`
 
-**Configuration file location:**
-
-```bash
-/var/lib/kubelet/config.yaml
-```
-
-**Configuration field:**
+**Configuration field in config.yaml:**
 
 ```yaml
 staticPodPath: /etc/kubernetes/manifests  # Default path
@@ -334,17 +317,7 @@ staticPodPath: /custom/path/to/manifests  # Custom path
 
 ### Managing Static PODs
 
-**Creating a Static POD:**
-
-1. Create a POD manifest file (YAML)
-2. Place it in the configured static POD directory
-3. The kubelet will automatically create the POD
-
-**Deleting a Static POD:**
-
-- Remove or delete the manifest file from the static POD directory
-- The kubelet will automatically terminate the POD
-- **Note**: `kubectl delete pod` will NOT permanently delete static PODs
+**When you place a static pod manifest file in the configured static pod directory (e.g., `/etc/kubernetes/manifests/`), the kubelet will automatically create the pod. If you try to delete the pod using `kubectl delete pod`, it will be recreated automatically because the manifest file still exists. To permanently remove a static pod, you must delete its manifest file from the directory.**
 
 ### Identifying Static PODs vs Regular PODs
 
@@ -360,10 +333,9 @@ kube-system   etcd-master-worker-node01      1/1     Running   0          10m   
 kube-system   kube-apiserver-control-plane   1/1     Running   0          10m      # Static POD
 kube-system   coredns-558bd4d5db-xyz123      1/1     Running   0          10m      # Regular POD
 kube-system   kube-proxy-abc456              1/1     Running   0          10m      # Regular POD
-default       nginx-deployment-789def-12345  1/1     Running   0          5m       # Regular POD
 ```
 
-**Pattern**: `<pod-name>-<node-name>` indicates a static POD
+> **Pattern**: `<pod-name>-<node-name>` indicates a static POD
 
 #### 2. Check POD Details with kubectl describe
 
@@ -415,16 +387,9 @@ ownerReferences:
 
 ## Miscellaneous
 
-### kubectl --command Flag Positioning
+### kubectl `--command` Flag Positioning
 
-**Key Rule**: `--command` must be the LAST kubectl option before `--`
-
-❌ **Wrong**:
-
-```bash
-kubectl run pod --image=busybox --command -- sleep 1000 --dry-run=client -o yaml
-# Everything after -- becomes container command: "sleep 1000 --dry-run=client -o yaml"
-```
+**Key Rule**: `--command` must be the **LAST** kubectl option before `--`
 
 ✅ **Correct**:
 
@@ -435,4 +400,11 @@ kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000
 kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000 > pod.yaml
 ```
 
-**Remember**: Everything after `--` is treated as the container command, not kubectl options.
+❌ **Wrong**:
+
+```bash
+kubectl run pod --image=busybox --command -- sleep 1000 --dry-run=client -o yaml
+# Everything after -- becomes container command: "sleep 1000 --dry-run=client -o yaml"
+```
+
+> **Remember**: Everything after `--` is treated as the container command, not kubectl options.
