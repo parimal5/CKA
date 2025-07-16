@@ -218,7 +218,7 @@ kubectl set resources deployment nginx-deploy \
 > ⚠️ **Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
 
 <details>
-<summary><strong>Working with Standalone Pods<strong><summary>
+<summary><strong>Working with Standalone Pods</strong></summary>
 
 Since Pods are immutable regarding their `spec.containers.resources`, you'll need to use the force replace method:
 
@@ -254,7 +254,7 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 > 💡 **Tip**: The `--force` flag deletes the existing Pod and recreates it with the new configuration, which will cause a brief downtime.
 
-<details>
+</details>
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
 ## 🚀LimitRange
@@ -327,7 +327,7 @@ staticPodPath: /custom/path/to/manifests  # Custom path
 - Delete the YAML file to permanently stop the pod
 
 <details>
-<summary><strong>Identifying Static PODs vs Regular PODs<summary><strong>
+<summary><strong>Identifying Static PODs vs Regular PODs</summary></strong>
 
 #### 1. Naming Convention
 
@@ -391,7 +391,7 @@ ownerReferences:
     name: nginx-deployment-789def
 ```
 
-<details>
+</details>
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
 ## Miscellaneous
