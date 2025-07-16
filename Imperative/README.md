@@ -289,7 +289,9 @@ Edit the `daemonset.yaml` file and make these changes:
 kubectl apply -f daemonset.yaml
 ```
 
-> 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+> 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.
+
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
 ## Static POD
 
@@ -354,8 +356,8 @@ Static PODs have the node name appended to their name:
 kubectl get pods -A
 
 NAMESPACE     NAME                           READY   STATUS    RESTARTS   AGE
-kube-system   etcd-master-node               1/1     Running   0          10m      # Static POD
-kube-system   kube-apiserver-master-node     1/1     Running   0          10m      # Static POD
+kube-system   etcd-master-worker-node01      1/1     Running   0          10m      # Static POD
+kube-system   kube-apiserver-control-plane   1/1     Running   0          10m      # Static POD
 kube-system   coredns-558bd4d5db-xyz123      1/1     Running   0          10m      # Regular POD
 kube-system   kube-proxy-abc456              1/1     Running   0          10m      # Regular POD
 default       nginx-deployment-789def-12345  1/1     Running   0          5m       # Regular POD
@@ -429,6 +431,8 @@ kubectl run pod --image=busybox --command -- sleep 1000 --dry-run=client -o yaml
 ```bash
 kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000
 # kubectl options first, then --command, then container command
+# OR
+kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000 > pod.yaml
 ```
 
 **Remember**: Everything after `--` is treated as the container command, not kubectl options.
