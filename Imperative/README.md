@@ -218,7 +218,7 @@ kubectl set resources deployment nginx-deploy \
 > ⚠️ **Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
 
 <details>
-<summary><strong>Working with Standalone Pods</strong></summary>
+<summary><strong>📖 Expand: Working with Standalone Pods</strong></summary>
 
 Since Pods are immutable regarding their `spec.containers.resources`, you'll need to use the force replace method:
 
@@ -255,6 +255,7 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 > 💡 **Tip**: The `--force` flag deletes the existing Pod and recreates it with the new configuration, which will cause a brief downtime.
 
 </details>
+
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
 ## 🚀LimitRange
@@ -265,10 +266,14 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 ## 🚀DaemonSet
 
-DaemonSets cannot be created directly using imperative commands like `kubectl create` or `kubectl run`.
+## DaemonSets cannot be created directly using imperative commands like `kubectl create` or `kubectl run`.
+
+---
+
+> 📘 **Need full steps? Click below to expand ⬇️**
 
 <details>
-<summary><strong>📖 Expand: DaemonSet Creation Process</strong></summary>
+<summary><strong>📖 🔧 DaemonSet Creation Process – Click to Expand</strong></summary>
 
 Since there's no direct imperative command for DaemonSet creation, use this approach:
 
@@ -294,7 +299,9 @@ kubectl apply -f daemonset.yaml
 
 > 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.
 
-</details>
+## </details>
+
+---
 
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
@@ -326,8 +333,12 @@ staticPodPath: /custom/path/to/manifests  # Custom path
 - Deleting pod via kubectl = ineffective (auto-recreated)
 - Delete the YAML file to permanently stop the pod
 
+---
+
+> 📘 **Need full steps? Click below to expand ⬇️**
+
 <details>
-<summary><strong>Identifying Static PODs vs Regular PODs</summary></strong>
+<summary><strong>📖 Expand: Identifying Static PODs vs Regular PODs</summary></strong>
 
 #### 1. Naming Convention
 
@@ -392,6 +403,9 @@ ownerReferences:
 ```
 
 </details>
+
+---
+
 **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
 ## Miscellaneous
