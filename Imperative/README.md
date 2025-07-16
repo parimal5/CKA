@@ -16,9 +16,9 @@ Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest file
   kubectl create service clusterip --help
   ```
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Pod
+## 🧩 Pod
 
 ```bash
 kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=nginx-app,env=prod"
@@ -29,9 +29,9 @@ Common Flags:
 - `--restart`= `Always`(Default), `OnFailure`, `Never`
 - `--command -- sleep 3600`
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Deployment
+## 📦 Deployment
 
 ```bash
 kubectl create deployment my-dep --image=busybox --replicas=3 --port=80
@@ -44,9 +44,9 @@ kubectl set image my-dep busybox=busybox:1.35
 - `nginx=nginx:1.25` format is `container=image`
 - Use `kubectl describe` to get container name
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Service
+## 🌐 Service
 
 ```bash
 kubectl create service clusterip my-svc --clusterip="10.25.0.2" --tcp=80:8080
@@ -91,9 +91,9 @@ kubectl run pod my-pod --image=nginx --port=80 --expose=tue
 kubectl replace --force -f pod.yaml
 ```
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Taints & Tolerations
+## ⚠️ Taints & 🛡️ Tolerations
 
 #### Tainting a Node
 
@@ -136,9 +136,9 @@ kubectl taint nodes workernode1 app=nginx:NoSchedule-
 kubectl describe nodes | grep -i Taints
 ```
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Labels
+## 🏷️Labels
 
 #### **Check node labels**
 
@@ -158,9 +158,9 @@ kubectl label node <node-name> <key>=<value>
 kubectl label node <node-name> <key>-
 ```
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Node Affinity
+## 📍Node Affinity
 
 #### Types of Node Affinity
 
@@ -191,7 +191,7 @@ Common Operators
 
 ---
 
-## Simple **nodeSelector**
+## 📍Simple **nodeSelector**
 
 ```yaml
 spec:
@@ -199,9 +199,9 @@ spec:
     zone: east
 ```
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Resources (Requests & Limits)
+## ⚖️Resources (Requests & Limits)
 
 The `kubectl set` command provides a quick way to configure resource requests and limits for existing workloads like `Deployments`, `StatefulSets`, `DaemonSets` :
 
@@ -256,15 +256,15 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 </details>
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀LimitRange
+## 📏LimitRange
 
 [LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/) provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads.
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀DaemonSet
+## 🔧DaemonSet
 
 ### DaemonSets cannot be created directly using imperative commands like `kubectl create` or `kubectl run`.
 
@@ -297,9 +297,9 @@ kubectl apply -f daemonset.yaml
 
 </details>
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
-## 🚀Static POD
+## ⚙️Static POD
 
 Static PODs are managed directly by the kubelet on each node, bypassing the Kubernetes `API server, scheduler, etcd, and controllers`. This makes them useful for running critical system components that need to be available even when the control plane is unavailable.
 
@@ -309,7 +309,7 @@ Static PODs are managed directly by the kubelet on each node, bypassing the Kube
 
 Kubelet watches: `/etc/kubernetes/manifests`
 
-### ⚙️ Custom Path
+### 📁 Custom Path
 
 The static POD path can be customized by modifying the kubelet configuration file: `/var/lib/kubelet/config.yaml`
 
@@ -394,7 +394,7 @@ ownerReferences:
 
 </details>
 
-**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+---
 
 ## Miscellaneous
 
