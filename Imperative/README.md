@@ -289,5 +289,146 @@ Edit the `daemonset.yaml` file and make these changes:
 kubectl apply -f daemonset.yaml
 ```
 
-> 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.
-> **━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+> 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+
+## Static POD
+
+Static PODs are managed directly by the kubelet on each node, bypassing the Kubernetes API server, scheduler, etcd, and controllers. This makes them useful for running critical system components that need to be available even when the control plane is unavailable.
+
+### Key Characteristics:
+
+- **Node-specific**: Each static POD runs on a specific node and cannot be moved to other nodes
+- **Kubelet-managed**: Created and managed solely by the kubelet process
+- **Pod-only**: Only POD resources can be created as static PODs (no Deployments, DaemonSets, ReplicaSets, etc.)
+- **Auto-restart**: If a static POD fails, the kubelet automatically restarts it
+
+### Default Configuration
+
+By default, the kubelet looks for static POD manifest files in the following directory:
+
+```bash
+/etc/kubernetes/manifests
+```
+
+The kubelet continuously monitors this directory and automatically creates PODs for any valid manifest files found there.
+
+### Configuring Static POD Path
+
+The static POD path can be customized by modifying the kubelet configuration file:
+
+**Configuration file location:**
+
+```bash
+/var/lib/kubelet/config.yaml
+```
+
+**Configuration field:**
+
+```yaml
+staticPodPath: /etc/kubernetes/manifests  # Default path
+# or
+staticPodPath: /custom/path/to/manifests  # Custom path
+```
+
+### Managing Static PODs
+
+**Creating a Static POD:**
+
+1. Create a POD manifest file (YAML)
+2. Place it in the configured static POD directory
+3. The kubelet will automatically create the POD
+
+**Deleting a Static POD:**
+
+- Remove or delete the manifest file from the static POD directory
+- The kubelet will automatically terminate the POD
+- **Note**: `kubectl delete pod` will NOT permanently delete static PODs
+
+### Identifying Static PODs vs Regular PODs
+
+#### 1. Naming Convention
+
+Static PODs have the node name appended to their name:
+
+```bash
+kubectl get pods -A
+
+NAMESPACE     NAME                           READY   STATUS    RESTARTS   AGE
+kube-system   etcd-master-node               1/1     Running   0          10m      # Static POD
+kube-system   kube-apiserver-master-node     1/1     Running   0          10m      # Static POD
+kube-system   coredns-558bd4d5db-xyz123      1/1     Running   0          10m      # Regular POD
+kube-system   kube-proxy-abc456              1/1     Running   0          10m      # Regular POD
+default       nginx-deployment-789def-12345  1/1     Running   0          5m       # Regular POD
+```
+
+**Pattern**: `<pod-name>-<node-name>` indicates a static POD
+
+#### 2. Check POD Details with kubectl describe
+
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+
+**For Static PODs:**
+
+```yaml
+Name: etcd-master-node
+Controlled By: Node/master-node # Key indicator
+```
+
+**For Regular PODs:**
+
+```yaml
+Name: nginx-deployment-789def-12345
+Controlled By: ReplicaSet/nginx-deployment-789def # Regular POD controlled by ReplicaSet
+```
+
+#### 3. Check ownerReferences
+
+```bash
+kubectl get pod <pod-name> -n <namespace> -o yaml | grep -A 5 ownerReferences
+```
+
+**Static POD output:**
+
+```yaml
+ownerReferences:
+  - apiVersion: v1
+    controller: true
+    kind: Node # Owned by Node
+    name: master-node
+```
+
+**Regular POD output:**
+
+```yaml
+ownerReferences:
+  - apiVersion: apps/v1
+    controller: true
+    kind: ReplicaSet # Owned by ReplicaSet/Deployment
+    name: nginx-deployment-789def
+```
+
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
+
+## Miscellaneous
+
+### kubectl --command Flag Positioning
+
+**Key Rule**: `--command` must be the LAST kubectl option before `--`
+
+❌ **Wrong**:
+
+```bash
+kubectl run pod --image=busybox --command -- sleep 1000 --dry-run=client -o yaml
+# Everything after -- becomes container command: "sleep 1000 --dry-run=client -o yaml"
+```
+
+✅ **Correct**:
+
+```bash
+kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000
+# kubectl options first, then --command, then container command
+```
+
+**Remember**: Everything after `--` is treated as the container command, not kubectl options.
