@@ -1,41 +1,37 @@
 # CKA Exam - Essential Imperative Commands
 
-## 📝 Quick Note:
+## 📝Quick Note:
 
 Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest files and edit them when some flags are not supported.
 
----
-
-## 🔧 Important Commands:
+## 🔧Important Commands:
 
 - `kubectl describe` - Get detailed information about resources
 - `kubectl explain` - Show resource documentation and field descriptions
 - `kubectl --help` - Get help for any command
 
-```bash
-kubectl create svc --help
-kubectl expose deploy --help
-kubectl create service clusterip --help
-```
+  ```bash
+  kubectl create svc --help
+  kubectl expose deploy --help
+  kubectl create service clusterip --help
+  ```
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Pod
+## 🚀Pod
 
 ```bash
 kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=nginx-app,env=prod"
 ```
 
-### Common Flags:
+Common Flags:
 
-| Flag        | Values                                  | Description                |
-| ----------- | --------------------------------------- | -------------------------- |
-| `--restart` | `Always`(Default), `OnFailure`, `Never` | Restart policy             |
-| `--command` | `-- sleep 3600`                         | Override container command |
+- `--restart`= `Always`(Default), `OnFailure`, `Never`
+- `--command -- sleep 3600`
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Deployment
+## 🚀Deployment
 
 ```bash
 kubectl create deployment my-dep --image=busybox --replicas=3 --port=80
@@ -45,15 +41,12 @@ kubectl create deployment my-dep --image=busybox --replicas=3 --port=80
 kubectl set image my-dep busybox=busybox:1.35
 ```
 
-> **Format**: `nginx=nginx:1.25` format is `container=image`
->
-> **Tip**: Use `kubectl describe` to get container name
+- `nginx=nginx:1.25` format is `container=image`
+- Use `kubectl describe` to get container name
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Service
-
-### Service Creation Commands
+## 🚀Service
 
 ```bash
 kubectl create service clusterip my-svc --clusterip="10.25.0.2" --tcp=80:8080
@@ -69,16 +62,12 @@ kubectl create service nodeport my-svc --node-port=30080 --tcp=80:8080
 
 > **Note**: The above commands create services when the target resources (POD, Deployments, RC etc.) are not created.
 
-### Common Flags:
+Common Flags:
 
-| Flag         | Values                                            | Description    |
-| ------------ | ------------------------------------------------- | -------------- |
-| `--type`     | `NodePort`, `LoadBalancer`, `ClusterIP` (Default) | Service type   |
-| `--labels`   | `app=nginx-app`                                   | Service labels |
-| `--protocol` | `TCP`, `UDP`, `SCTP`                              | Protocol type  |
-| `--tcp`      | `<port>:<targetPort>`                             | Port mapping   |
-
-### Expose Existing Resources
+- `--type` = `NodePort`, `LoadBalancer`, `ClusterIP` (Default)
+- `--labels` = `app=nginx-app`
+- `--protocol` = `TCP`, `UDP`, `SCTP`
+- `--tcp`=`<port>:<targetPort>`
 
 ```bash
 kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc --type=NodePort
@@ -86,7 +75,7 @@ kubectl expose deployment my-deploy --port=80 --target-port=8080 --name=my-svc -
 
 > **Note**: Can expose Pods, Deployments, RC, etc. using `kubectl expose`
 
-### To Create an pod and expose it at the same time
+#### **To Create an pod and expose it at the same time**
 
 Use the flag `--expose=true` If true, create a ClusterIP service associated with the pod. Requires `--port`(The port that this container exposes).
 
@@ -96,36 +85,32 @@ kubectl run pod my-pod --image=nginx --port=80 --expose=tue
 
 > **Note**: The above command wil create the `POD` and a `Service` at the same time.
 
-### Delete and recreate the Pod in single command from manifest file
+#### **Delete and recreate the Pod in single command from manifest file**
 
 ```bash
 kubectl replace --force -f pod.yaml
 ```
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Taints & Tolerations
+## 🚀Taints & Tolerations
 
-### Tainting a Node
+#### Tainting a Node
 
 ```bash
 kubectl taint nodes node-name key=value:effect
 ```
 
-**Effects:**
+Where:
 
-- `NoSchedule` - No new pods scheduled
-- `PreferNoSchedule` - Avoid scheduling if possible
-- `NoExecute` - Evict existing pods
+- `effect` can be `NoSchedule`, `PreferNoSchedule`, or `NoExecute`
 
-### Important Flags:
+**Important Flags:**
 
-| Flag             | Description                       |
-| ---------------- | --------------------------------- |
-| `-l, --selector` | Apply taint using label selector  |
-| `--all`          | Apply to all nodes in the cluster |
+- `-l, --selector`: Apply taint using label selector
+- `--all`: Apply to all nodes in the cluster
 
-### Adding Tolerations to Pods
+#### Adding Tolerations to Pods
 
 ```yaml
 tolerations:
@@ -137,7 +122,7 @@ tolerations:
 
 > **Note**: There are only 2 types of operators `Equal` and `Exists`
 
-### Removing Taints from a Node
+#### **Removing Taints from a Node**
 
 Add a `-` at the end of the same command used for tainting:
 
@@ -145,44 +130,44 @@ Add a `-` at the end of the same command used for tainting:
 kubectl taint nodes workernode1 app=nginx:NoSchedule-
 ```
 
-### Viewing Node Taints
+#### **Viewing Node Taints**
 
 ```bash
 kubectl describe nodes | grep -i Taints
 ```
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Labels
+## 🚀Labels
 
-### Check node labels
+#### **Check node labels**
 
 ```bash
 kubectl get nodes --show-labels
 ```
 
-### Adding a labels
+#### **Adding a labels**
 
 ```bash
 kubectl label node <node-name> <key>=<value>
 ```
 
-### Removing the label
+#### **Removing the label**
 
 ```bash
 kubectl label node <node-name> <key>-
 ```
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Node Affinity
+## 🚀Node Affinity
 
-### Types of Node Affinity
+#### Types of Node Affinity
 
-1. **`requiredDuringSchedulingIgnoredDuringExecution`** - Hard requirement (pod won't schedule if no matching node)
-2. **`preferredDuringSchedulingIgnoredDuringExecution`** - Soft preference (scheduler tries but schedules anyway if no match)
+1. `requiredDuringSchedulingIgnoredDuringExecution` - Hard requirement (pod won't schedule if no matching node)
+2. `preferredDuringSchedulingIgnoredDuringExecution` - Soft preference (scheduler tries but schedules anyway if no match)
 
-### Add Node Affinity to Pod/Deployment
+#### Add Node Affinity to Pod/Deployment
 
 ```yaml
 spec:
@@ -197,16 +182,16 @@ spec:
                   - east
 ```
 
-### Common Operators
+Common Operators
 
-| Operator       | Description       |
-| -------------- | ----------------- |
-| `In`           | value in list     |
-| `NotIn`        | value not in list |
-| `Exists`       | key exists        |
-| `DoesNotExist` | key doesn't exist |
+- `In` - value in list
+- `NotIn` - value not in list
+- `Exists` - key exists
+- `DoesNotExist` - key doesn't exist
 
-### Simple nodeSelector
+---
+
+## Simple **nodeSelector**
 
 ```yaml
 spec:
@@ -214,13 +199,13 @@ spec:
     zone: east
 ```
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Resources (Requests & Limits)
+## 🚀Resources (Requests & Limits)
 
 The `kubectl set` command provides a quick way to configure resource requests and limits for existing workloads like `Deployments`, `StatefulSets`, `DaemonSets` :
 
-### Basic Usage:
+**Basic Usage:**
 
 First, create your resource using any method (`kubectl create` or YAML manifest), then apply resource configurations:
 
@@ -232,20 +217,18 @@ kubectl set resources deployment nginx-deploy \
 
 > ⚠️ **Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
 
-### Working with Standalone Pods
-
 <details>
-<summary><strong>📖 Expand: Pod Resource Modification Process</strong></summary>
+<summary><strong>Working with Standalone Pods<strong><summary>
 
 Since Pods are immutable regarding their `spec.containers.resources`, you'll need to use the force replace method:
 
-#### Step 1: Edit the Pod
+**Step 1: Edit the Pod**
 
 ```bash
 kubectl edit pod <pod-name>
 ```
 
-#### Step 2: Handle the Expected Error
+**Step 2: Handle the Expected Error**
 
 When you modify resources, you'll encounter this error on save:
 
@@ -261,7 +244,7 @@ Edit cancelled, your changes have been saved to:
 /tmp/kubectl-edit-XXXX.yaml
 ```
 
-#### Step 3: Force Replace
+**Step 3: Force Replace**
 
 Apply your changes using the temporary file:
 
@@ -271,21 +254,18 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 > 💡 **Tip**: The `--force` flag deletes the existing Pod and recreates it with the new configuration, which will cause a brief downtime.
 
-</details>
+<details>
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
----
-
-## 🚀 LimitRange
+## 🚀LimitRange
 
 [LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/) provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads.
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 DaemonSet
+## 🚀DaemonSet
 
 DaemonSets cannot be created directly using imperative commands like `kubectl create` or `kubectl run`.
-
-### Workaround: Generate from Deployment
 
 <details>
 <summary><strong>📖 Expand: DaemonSet Creation Process</strong></summary>
@@ -316,18 +296,13 @@ kubectl apply -f daemonset.yaml
 
 </details>
 
----
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
-## 🚀 Static POD
+## 🚀Static POD
 
 Static PODs are managed directly by the kubelet on each node, bypassing the Kubernetes `API server, scheduler, etcd, and controllers`. This makes them useful for running critical system components that need to be available even when the control plane is unavailable.
 
-### Key Characteristics:
-
-- **Node-specific**
-- **Kubelet-managed**
-- **Pod-only** (no Deployments, DaemonSets, ReplicaSets, etc.)
-- **Auto-restart**
+**Key Characteristics:** Node-specific , Kubelet-managed , Pod-only (no Deployments, DaemonSets, ReplicaSets, etc.) , Auto-restart
 
 ### 📁 Default Path
 
@@ -337,7 +312,7 @@ Kubelet watches: `/etc/kubernetes/manifests`
 
 The static POD path can be customized by modifying the kubelet configuration file: `/var/lib/kubelet/config.yaml`
 
-#### Configuration field in config.yaml:
+**Configuration field in config.yaml:**
 
 ```yaml
 staticPodPath: /etc/kubernetes/manifests  # Default path
@@ -345,16 +320,14 @@ staticPodPath: /etc/kubernetes/manifests  # Default path
 staticPodPath: /custom/path/to/manifests  # Custom path
 ```
 
-### 📌 Behavior
+📌 Behavior
 
-- **Add YAML to path(staticPodPath)** → pod auto-created
-- **Deleting pod via kubectl** = ineffective (auto-recreated)
-- **Delete the YAML file** to permanently stop the pod
-
-### Identifying Static PODs vs Regular PODs
+- Add YAML to path(staticPodPath) → pod auto-created
+- Deleting pod via kubectl = ineffective (auto-recreated)
+- Delete the YAML file to permanently stop the pod
 
 <details>
-<summary><strong>📖 Expand: Identification Methods</strong></summary>
+<summary><strong>Identifying Static PODs vs Regular PODs<summary><strong>
 
 #### 1. Naming Convention
 
@@ -418,9 +391,8 @@ ownerReferences:
     name: nginx-deployment-789def
 ```
 
-</details>
-
----
+<details>
+**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**
 
 ## Miscellaneous
 
@@ -428,7 +400,7 @@ ownerReferences:
 
 **Key Rule**: `--command` must be the **LAST** kubectl option before `--`
 
-#### ✅ Correct:
+✅ **Correct**:
 
 ```bash
 kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000
@@ -437,7 +409,7 @@ kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000
 kubectl run pod --image=busybox --dry-run=client -o yaml --command -- sleep 1000 > pod.yaml
 ```
 
-#### ❌ Wrong:
+❌ **Wrong**:
 
 ```bash
 kubectl run pod --image=busybox --command -- sleep 1000 --dry-run=client -o yaml
