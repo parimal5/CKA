@@ -260,7 +260,18 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 ## 📏LimitRange
 
-[LimitRange](https://kubernetes.io/docs/concepts/policy/limit-range/) provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads.
+LimitRange provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads.
+
+✅ Purpose:
+
+- Set default CPU/memory requests and limits if not defined by user
+- Enforce min/max bounds for container resources
+
+🧱 Resource Types:
+
+- Container (most common)
+- Pod
+- PersistentVolumeClaim (for storage limits)
 
 ---
 
@@ -305,11 +316,11 @@ Static PODs are managed directly by the kubelet on each node, bypassing the Kube
 
 **Key Characteristics:** Node-specific , Kubelet-managed , Pod-only (no Deployments, DaemonSets, ReplicaSets, etc.) , Auto-restart
 
-### 📁 Default Path
+#### 📁 Default Path
 
-Kubelet watches: `/etc/kubernetes/manifests`
+- `/etc/kubernetes/manifests`
 
-### 📁 Custom Path
+#### 📁 Custom Path
 
 The static POD path can be customized by modifying the kubelet configuration file: `/var/lib/kubelet/config.yaml`
 
@@ -393,6 +404,36 @@ ownerReferences:
 ```
 
 </details>
+
+---
+
+## 🎯PriorityClass
+
+- Defines a priority value for Pods (higher = more important)
+- Helps Kubernetes schedule and evict pods during resource pressure
+
+#### Creating the `PriorityClass`
+
+```bash
+kubectl create pc high-prio --value=1000 --global-default=false --preemption-policy='PreemptLowerPriority'
+```
+
+#### preemptionPolicy Values
+
+- `PreemptLowerPriority` → Can evict lower-priority pods (**Default**) ✅
+- `Never` → Waits for resources, won’t evict anyone ❌
+
+#### Assingnt the PriorityClass
+
+```yaml
+spec:
+  priorityClassName: high-priority
+  preemptionPolicy: Never # ✅ Optional (This overide the default values)
+```
+
+> **NOTE**: `priorityClassName` and `preemptionPolicy` are always applied at the `Pod` level, even when using `Deployments`, `DaemonSets`, or other controllers — set them inside `spec.template.spec`.
+
+> _IMPORTANT_: When you create a pod, Kubernetes automatically adds a computed priority field (e.g., `priority: 0`) based on the `priorityClassName`. If you're using `kubectl edit` or applying a modified pod YAML, make sure to keep only `priorityClassName` — do not include the priority field, or it will cause a `Forbidden error`.
 
 ---
 
