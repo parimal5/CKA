@@ -437,6 +437,36 @@ spec:
 
 ---
 
+## 🕒 Multiple-Schedulers
+
+Kubernetes allows you to run multiple schedulers simultaneously within a cluster. This enables you to use specialized scheduling logic for different workloads while maintaining the default scheduler for standard operations.
+
+Schedular can be run as POD, Deployment or ReplicaSet etc.
+
+### 1. List Available Schedulers
+
+```bash
+kubectl get pods -n kube-system
+kubectl get pods -n kube-system -l component=kube-scheduler
+```
+
+2. While create the pod mention the below field so that the pod will be schedular using the custom or new schedular instead of deafult one
+
+```yaml
+spec:
+  schedulerName: my-custom-scheduler
+```
+
+### 3. Validation Commands
+
+```bash
+# Check which scheduler was used
+kubectl describe pod <pod-name> | grep "Scheduled"
+
+# Check all events
+kubectl get events -o wide
+```
+
 ## Miscellaneous
 
 ### kubectl `--command` Flag Positioning
