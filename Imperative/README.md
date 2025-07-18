@@ -18,7 +18,7 @@ Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest file
 
 ---
 
-## 🧩 Pod
+<h2 align="center"><strong> 🧩 Pod</strong></h2>
 
 ```bash
 kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=nginx-app,env=prod"
@@ -31,7 +31,7 @@ Common Flags:
 
 ---
 
-## 📦 Deployment
+<h2 align="center"><strong> 📦 Deployment</strong></h2>
 
 ```bash
 kubectl create deployment my-dep --image=busybox --replicas=3 --port=80
@@ -46,7 +46,7 @@ kubectl set image my-dep busybox=busybox:1.35
 
 ---
 
-## 🌐 Service
+<h2 align="center"><strong>🌐 Service</strong></h2>
 
 ```bash
 kubectl create service clusterip my-svc --clusterip="10.25.0.2" --tcp=80:8080
@@ -93,7 +93,7 @@ kubectl replace --force -f pod.yaml
 
 ---
 
-## ⚠️ Taints & 🛡️ Tolerations
+<h2 align="center"><strong>⚠️ Taints & 🛡️ Tolerations</strong></h2>
 
 #### Tainting a Node
 
@@ -138,7 +138,7 @@ kubectl describe nodes | grep -i Taints
 
 ---
 
-## 🏷️Labels
+<h2 align="center"><strong> 🏷️Labels</strong></h2>
 
 #### **Check node labels**
 
@@ -160,7 +160,7 @@ kubectl label node <node-name> <key>-
 
 ---
 
-## 📍Node Affinity
+<h2 align="center"><strong>📍Node Affinity</strong></h2>
 
 #### Types of Node Affinity
 
@@ -191,7 +191,7 @@ Common Operators
 
 ---
 
-## 📍Simple **nodeSelector**
+<h2 align="center"><strong>📍Simple **nodeSelector**</strong></h2>
 
 ```yaml
 spec:
@@ -201,7 +201,7 @@ spec:
 
 ---
 
-## ⚖️Resources (Requests & Limits)
+<h2 align="center"><strong>⚖️Resources (Requests & Limits)</strong></h2>
 
 The `kubectl set` command provides a quick way to configure resource requests and limits for existing workloads like `Deployments`, `StatefulSets`, `DaemonSets` :
 
@@ -258,7 +258,7 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 ---
 
-## 📏LimitRange
+<h2 align="center"><strong>📏LimitRange</strong></h2>
 
 LimitRange provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads.
 
@@ -275,7 +275,7 @@ LimitRange provides default resource limits and requests for containers in a nam
 
 ---
 
-## 🔧DaemonSet
+<h2 align="center"><strong>🔧DaemonSet</strong></h2>
 
 ### DaemonSets cannot be created directly using imperative commands like `kubectl create` or `kubectl run`.
 
@@ -310,7 +310,7 @@ kubectl apply -f daemonset.yaml
 
 ---
 
-## ⚙️Static POD
+<h2 align="center"><strong>⚙️Static POD</strong></h2>
 
 Static PODs are managed directly by the kubelet on each node, bypassing the Kubernetes `API server, scheduler, etcd, and controllers`. This makes them useful for running critical system components that need to be available even when the control plane is unavailable.
 
@@ -407,7 +407,7 @@ ownerReferences:
 
 ---
 
-## 🎯PriorityClass
+<h2 align="center"><strong>🎯PriorityClass</strong></h2>
 
 - Defines a priority value for Pods (higher = more important)
 - Helps Kubernetes schedule and evict pods during resource pressure
@@ -437,7 +437,7 @@ spec:
 
 ---
 
-## 🕒 Multiple-Schedulers
+<h2 align="center"><strong>🕒 Multiple-Schedulers</strong></h2>
 
 Kubernetes allows you to run multiple schedulers simultaneously within a cluster. This enables you to use specialized scheduling logic for different workloads while maintaining the default scheduler for standard operations.
 
@@ -469,7 +469,7 @@ kubectl get events -o wide
 
 ---
 
-## Admission Controllers
+<h2 align="center"><strong>Admission Controllers</strong></h2>
 
 ### Overview
 
