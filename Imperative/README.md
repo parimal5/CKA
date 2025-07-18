@@ -8,12 +8,12 @@ Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest file
 
 - `kubectl describe` - Get detailed information about resources
 - `kubectl explain` - Show resource documentation and field descriptions
-- `kubectl --help` - Get help for any command
+- `kubectl -h or --help` - Get help for any command
 
   ```bash
-  kubectl create svc --help
-  kubectl expose deploy --help
-  kubectl create service clusterip --help
+  kubectl create svc -h
+  kubectl expose deploy -h
+  kubectl create service clusterip -h
   ```
 
 ---
@@ -215,7 +215,7 @@ kubectl set resources deployment nginx-deploy \
   --requests=cpu=500m,memory=512Mi
 ```
 
-> ⚠️ **Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
+⚠️**Important**: This method does not work with standalone Pods, as Pod resource specifications are immutable after creation.
 
 <details>
 <summary><strong>📖 Expand: Working with Standalone Pods⬇️</strong></summary>
@@ -467,6 +467,8 @@ kubectl describe pod <pod-name> | grep "Scheduled"
 kubectl get events -o wide
 ```
 
+---
+
 ## Admission Controllers
 
 ### Overview
@@ -479,11 +481,11 @@ Admission Controllers allow you to modify the behavior of resources in your Kube
 - **DefaultStorageClass** - Automatically assigns default storage class to PVCs
 - **NamespaceExists** - Validates that the specified namespace exists (throws error if not)
 
-#### Configuration
+### Configuration
 
 Admission controllers are managed by the `kube-apiserver` and some are enabled by default.
 
-##### Viewing Current Configuration
+#### Viewing Current Configuration
 
 Check the current admission controller configuration:
 
@@ -498,7 +500,7 @@ Look for these fields:
 - --disable-admission-plugins=plugin1,plugin2
 ```
 
-#### Listing Available Plugins
+### Listing Available Plugins
 
 To see all available admission controllers:
 
@@ -506,7 +508,7 @@ To see all available admission controllers:
 kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h | grep "enable-admission-plugins"
 ```
 
-### Key Points for CKA
+### Key Points
 
 - Admission controllers run as part of the kube-apiserver
 - They can be enabled or disabled by editing the kube-apiserver static pod manifest
@@ -515,7 +517,7 @@ kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h
 
 > **NOTE**: Editing admission controller settings requires kube-apiserver restart (automatic if static pod on control plane).
 
-## Miscellaneous
+<h2 align="center"><strong>Miscellaneous</strong></h2>
 
 ### kubectl `--command` Flag Positioning
 
