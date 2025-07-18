@@ -443,21 +443,21 @@ Kubernetes allows you to run multiple schedulers simultaneously within a cluster
 
 Schedular can be run as POD, Deployment or ReplicaSet etc.
 
-### 1. List Available Schedulers
+#### 1. List Available Schedulers
 
 ```bash
 kubectl get pods -n kube-system
 kubectl get pods -n kube-system -l component=kube-scheduler
 ```
 
-2. While create the pod mention the below field so that the pod will be schedular using the custom or new schedular instead of deafult one
+#### 2. Using Custom Scheduler in Pod
 
 ```yaml
 spec:
   schedulerName: my-custom-scheduler
 ```
 
-### 3. Validation Commands
+#### 3. Validation Commands
 
 ```bash
 # Check which scheduler was used
@@ -466,6 +466,54 @@ kubectl describe pod <pod-name> | grep "Scheduled"
 # Check all events
 kubectl get events -o wide
 ```
+
+## Admission Controllers
+
+### Overview
+
+Admission Controllers allow you to modify the behavior of resources in your Kubernetes cluster. They intercept requests to the API server before objects are persisted. They are gatekeepers that run after authentication/authorization but before objects are stored in etcd.
+
+#### Built-in Examples
+
+- **NamespaceAutoProvision** - Automatically creates namespaces if they don't exist
+- **DefaultStorageClass** - Automatically assigns default storage class to PVCs
+- **NamespaceExists** - Validates that the specified namespace exists (throws error if not)
+
+#### Configuration
+
+Admission controllers are managed by the `kube-apiserver` and some are enabled by default.
+
+##### Viewing Current Configuration
+
+Check the current admission controller configuration:
+
+```bash
+cat /etc/kubernetes/manifests/kube-apiserver.yaml
+```
+
+Look for these fields:
+
+```yaml
+- --enable-admission-plugins=plugin1,plugin2
+- --disable-admission-plugins=plugin1,plugin2
+```
+
+#### Listing Available Plugins
+
+To see all available admission controllers:
+
+```bash
+kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h | grep "enable-admission-plugins"
+```
+
+### Key Points for CKA
+
+- Admission controllers run as part of the kube-apiserver
+- They can be enabled or disabled by editing the kube-apiserver static pod manifest
+- Configuration requires restarting the kube-apiserver
+- Some controllers are enabled by default in most clusters
+
+> **NOTE**: Editing admission controller settings requires kube-apiserver restart (automatic if static pod on control plane).
 
 ## Miscellaneous
 
