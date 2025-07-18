@@ -10,14 +10,6 @@ Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest file
 - `kubectl explain` - Show resource documentation and field descriptions
 - `kubectl -h or --help` - Get help for any command
 
-  ```bash
-  kubectl create svc -h
-  kubectl expose deploy -h
-  kubectl create service clusterip -h
-  ```
-
----
-
 <h2 align="center"><strong> 🧩 Pod</strong></h2>
 
 ```bash
@@ -28,8 +20,6 @@ Common Flags:
 
 - `--restart`= `Always`(Default), `OnFailure`, `Never`
 - `--command -- sleep 3600`
-
----
 
 <h2 align="center"><strong> 📦 Deployment</strong></h2>
 
@@ -43,8 +33,6 @@ kubectl set image my-dep busybox=busybox:1.35
 
 - `nginx=nginx:1.25` format is `container=image`
 - Use `kubectl describe` to get container name
-
----
 
 <h2 align="center"><strong>🌐 Service</strong></h2>
 
@@ -91,8 +79,6 @@ kubectl run pod my-pod --image=nginx --port=80 --expose=tue
 kubectl replace --force -f pod.yaml
 ```
 
----
-
 <h2 align="center"><strong>⚠️ Taints & 🛡️ Tolerations</strong></h2>
 
 #### Tainting a Node
@@ -136,8 +122,6 @@ kubectl taint nodes workernode1 app=nginx:NoSchedule-
 kubectl describe nodes | grep -i Taints
 ```
 
----
-
 <h2 align="center"><strong> 🏷️Labels</strong></h2>
 
 #### **Check node labels**
@@ -157,8 +141,6 @@ kubectl label node <node-name> <key>=<value>
 ```bash
 kubectl label node <node-name> <key>-
 ```
-
----
 
 <h2 align="center"><strong>📍Node Affinity</strong></h2>
 
@@ -189,8 +171,6 @@ Common Operators
 - `Exists` - key exists
 - `DoesNotExist` - key doesn't exist
 
----
-
 <h2 align="center"><strong>📍Simple **nodeSelector**</strong></h2>
 
 ```yaml
@@ -198,8 +178,6 @@ spec:
   nodeSelector:
     zone: east
 ```
-
----
 
 <h2 align="center"><strong>⚖️Resources (Requests & Limits)</strong></h2>
 
@@ -256,8 +234,6 @@ kubectl replace --force -f /tmp/kubectl-edit-XXXX.yaml
 
 </details>
 
----
-
 <h2 align="center"><strong>📏LimitRange</strong></h2>
 
 LimitRange provides default resource limits and requests for containers in a namespace, ensuring consistent resource management across workloads.
@@ -272,8 +248,6 @@ LimitRange provides default resource limits and requests for containers in a nam
 - Container (most common)
 - Pod
 - PersistentVolumeClaim (for storage limits)
-
----
 
 <h2 align="center"><strong>🔧DaemonSet</strong></h2>
 
@@ -307,8 +281,6 @@ kubectl apply -f daemonset.yaml
 > 💡 **Tip**: DaemonSets automatically run one Pod per node, so replicas and deployment strategies are not applicable.
 
 </details>
-
----
 
 <h2 align="center"><strong>⚙️Static POD</strong></h2>
 
@@ -405,8 +377,6 @@ ownerReferences:
 
 </details>
 
----
-
 <h2 align="center"><strong>🎯PriorityClass</strong></h2>
 
 - Defines a priority value for Pods (higher = more important)
@@ -434,8 +404,6 @@ spec:
 > **NOTE**: `priorityClassName` and `preemptionPolicy` are always applied at the `Pod` level, even when using `Deployments`, `DaemonSets`, or other controllers — set them inside `spec.template.spec`.
 
 > _IMPORTANT_: When you create a pod, Kubernetes automatically adds a computed priority field (e.g., `priority: 0`) based on the `priorityClassName`. If you're using `kubectl edit` or applying a modified pod YAML, make sure to keep only `priorityClassName` — do not include the priority field, or it will cause a `Forbidden error`.
-
----
 
 <h2 align="center"><strong>🕒 Multiple-Schedulers</strong></h2>
 
@@ -466,8 +434,6 @@ kubectl describe pod <pod-name> | grep "Scheduled"
 # Check all events
 kubectl get events -o wide
 ```
-
----
 
 <h2 align="center"><strong>Admission Controllers</strong></h2>
 
