@@ -1,5 +1,7 @@
-<h1 align="center"><strong>CKA Exam Notes</strong></h1>
-<h2 align="center"><strong>Scheduling</strong></h2>
+<div align="center">
+  <h1>CKA Exam Notes</h1>
+  <h3>Scheduling</h3>
+</div>
 
 ---
 
