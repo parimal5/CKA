@@ -502,10 +502,33 @@ To see all available admission controllers:
 kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h | grep "enable-admission-plugins"
 ```
 
+### Dynamic Admission Controllers (Webhooks)
+
+#### Mutating Admission Controllers
+
+- **Purpose**: Can **MODIFY** objects before storage
+- **When**: Runs **FIRST** (before validating)
+- **Use Cases**: Inject sidecars, add labels, set defaults, modify resources
+- **Example**: Automatically add app=frontend label to all pods in production namespace
+
+#### Validating Admission Controllers
+
+- **Purpose**: Can **VALIDATE** objects (accept/reject only)
+- **When**: Runs **AFTER** mutating controllers
+- **Use Cases**: Enforce naming, security policies, compliance checks
+- **Example**: Reject any pod that doesn't have resource limits defined
+
+### Execution Flow
+
+```
+Request → Auth → Authorization → MUTATING → VALIDATING → etcd
+```
+
 ### Key Points
 
 - Admission controllers run as part of the kube-apiserver
 - They can be enabled or disabled by editing the kube-apiserver static pod manifest
+- **Mutating runs BEFORE Validating**
 - Configuration requires restarting the kube-apiserver
 - Some controllers are enabled by default in most clusters
 
