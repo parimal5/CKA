@@ -3,8 +3,6 @@
   <h3>Core Concepts</h3>
 </div>
 
----
-
 ## 📝 Quick Note
 
 Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest files and edit them when some flags are not supported.
