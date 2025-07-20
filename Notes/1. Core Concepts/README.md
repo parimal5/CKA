@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>CKA Exam Notes</h1>
-  <h3>Core Concept</h3>
+  <h1><strong>CKA Exam Notes</strong></h1>
+  <h2>Core Concepts</h2>
 </div>
 
 ---
