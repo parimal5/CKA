@@ -3,6 +3,16 @@
   <h2>Scheduling</h2>
 </div>
 
+## 📝 Quick Note
+
+Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest files and edit them when some flags are not supported.
+
+## 🔧 Important Commands
+
+- `kubectl describe` - Get detailed information about resources
+- `kubectl explain` - Show resource documentation and field descriptions
+- `kubectl -h or --help` - Get help for any command
+
 ---
 
 <h2 align="center"><strong>⚠️ Taints & 🛡️ Tolerations</strong></h2>
