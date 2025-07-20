@@ -1,4 +1,7 @@
-<h1 align="center"><strong># CKA Exam - Scheduling</strong></h1>
+<h1 align="center"><strong>CKA Exam Notes</strong></h1>
+<h2 align="center"><strong>Scheduling</strong></h2>
+
+---
 
 <h2 align="center"><strong>⚠️ Taints & 🛡️ Tolerations</strong></h2>
 

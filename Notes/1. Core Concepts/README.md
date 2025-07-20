@@ -1,4 +1,7 @@
-# CKA Exam - Core Concepts
+<h1 align="center"><strong>CKA Exam Notes</strong></h1>
+<h2 align="center"><strong>Core Concepts</strong></h2>
+
+---
 
 ## 📝 Quick Note
 
