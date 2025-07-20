@@ -1,7 +1,9 @@
 <div align="center">
   <h1><strong>CKA Exam Notes</strong></h1>
-  <h2>Core Concepts</h2>
+  <h3>Core Concepts</h3>
 </div>
+
+---
 
 ## 📝 Quick Note
 

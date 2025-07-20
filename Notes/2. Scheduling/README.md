@@ -1,7 +1,9 @@
 <div align="center">
   <h1><strong>CKA Exam Notes</strong></h1>
-  <h2>Scheduling</h2>
+  <h3>Scheduling</h3>
 </div>
+
+---
 
 ## 📝 Quick Note
 
