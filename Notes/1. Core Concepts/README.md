@@ -94,4 +94,4 @@ kubectl run pod my-pod --image=nginx --port=80 --expose=true
 kubectl replace --force -f pod.yaml
 ```
 
-[Part-2: Scheduling](../Scheduling/README.md)
+[Part-2: Scheduling](../2.%20Scheduling/README.md)
