@@ -47,3 +47,12 @@ Terminates all old Pods first, then creates new ones.
 strategy:
   type: Recreate
 ```
+
+## Commands and Arguments
+
+![alt text](image.png)
+
+| Docker Concept | Kubernetes Field | Notes                         |
+| -------------- | ---------------- | ----------------------------- |
+| `ENTRYPOINT`   | `command`        | Overrides entrypoint in image |
+| `CMD`          | `args`           | Passed as args to entrypoint  |
