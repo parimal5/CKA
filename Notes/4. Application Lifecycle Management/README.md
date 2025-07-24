@@ -164,3 +164,110 @@ env:
 - Not encrypted at rest by default (use encryption at rest)
 - Limited to 1MB per Secret
 - **Declarative approach requires manual base64 encoding:** `echo -n 'password' | base64`
+
+## Scaling Pods
+
+Both HPA and VPA require metrics server or monitoring adapter setup to function properly.
+
+### Manual Scaling
+
+**Monitor Resources:**
+
+```bash
+kubectl top pod
+kubectl top nodes
+```
+
+Shows current CPU and memory usage for pods and nodes.
+
+**Scale Deployment:**
+
+```bash
+kubectl scale deployment my-deploy --replicas=5
+```
+
+### HPA - Horizontal Pod Autoscaler
+
+HPA is a built-in Kubernetes feature that automatically scales pods horizontally based on resource metrics.
+
+**Key Points:**
+
+- Scales number of pod replicas up/down
+- Based on CPU, memory, or custom metrics
+- Requires metrics server to be installed
+- Default check interval: 15 seconds
+
+**Create HPA:**
+
+```bash
+# Imperative command
+kubectl autoscale deployment my-deploy --min=2 --max=10 --cpu-percent=70
+
+# Generate YAML
+kubectl autoscale deployment my-deploy --min=2 --max=10 --cpu-percent=70 --dry-run=client -o yaml > hpa.yaml
+```
+
+**Check HPA Status:**
+
+```bash
+kubectl get hpa
+kubectl describe hpa my-deploy
+```
+
+**Important HPA Behavior:**
+
+- Scale up: Quick response when threshold exceeded
+- Scale down: Gradual (5-minute cooldown by default)
+- Target utilization is average across all pods
+
+### VPA - Vertical Pod Autoscaler
+
+VPA is **not** a built-in Kubernetes feature and must be installed separately.
+
+**Key Points:**
+
+- Adjusts CPU and memory requests/limits for containers
+- Three update modes: `Off`, `Initial`, `Auto`
+- Requires pod restart for resource changes (in Auto mode)
+- Cannot be used with HPA on CPU/memory metrics
+
+**VPA Components:**
+
+1. **VPA Recommender** - Analyzes resource usage and provides recommendations
+2. **VPA Updater** - Terminates pods that need resource updates
+3. **VPA Admission Controller** - Sets resource requests on new pods
+
+**VPA Modes:**
+
+- `Off`: Only provides recommendations, no automatic changes
+- `Initial`: Sets resources only when pods are created
+- `Auto`: Automatically updates resources and restarts pods
+
+**Check VPA:**
+
+```bash
+kubectl get vpa
+kubectl describe vpa my-app-vpa
+```
+
+### Best Practices
+
+**HPA:**
+
+- Set appropriate min/max replicas to avoid resource waste or shortage
+- Use multiple metrics (CPU + memory) for better scaling decisions
+- Monitor scaling events and adjust thresholds as needed
+
+**VPA:**
+
+- Start with `Off` mode to analyze recommendations
+- Use `Initial` mode for new deployments
+- Be cautious with `Auto` mode due to pod restarts
+- Set resource limits to prevent over-allocation
+
+**General:**
+
+- Never use HPA and VPA together on same resource metrics
+- Ensure metrics server is properly configured
+- Test scaling behavior in non-production first
+- Monitor cluster resource capacity during scaling events
