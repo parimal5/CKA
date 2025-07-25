@@ -6,13 +6,22 @@ This document provides step-by-step instructions for upgrading a Kubernetes clus
 
 **Example:** Upgrading from v1.32.x to v1.33.x
 
-## Prerequisites
+### Prerequisites
 
 - Administrative access to all cluster nodes
 - Backup of your cluster (etcd snapshot recommended)
 - Understanding of your cluster's current state and workloads
 
-## Reference Documentation
+### ⚠️ Important Safety Notice
+
+**CAUTION**: Before executing any command in this guide:
+
+- Copy each command to a text editor (notepad, VS Code, etc.) first
+  Carefully review and modify all version numbers to match your target version
+- Double-check the command for accuracy before pasting it into your terminal
+- Execute commands one at a time - never run multiple commands without verifying the previous step completed successfully
+
+### Reference Documentation
 
 - [Upgrading kubeadm clusters](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
 - [pkgs.k8s.io: Kubernetes Community-Owned Package Repositories](https://v1-32.docs.kubernetes.io/blog/2023/08/15/pkgs-k8s-io-introduction/)
