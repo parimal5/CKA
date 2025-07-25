@@ -12,7 +12,7 @@ This document provides step-by-step instructions for upgrading a Kubernetes clus
 - Backup of your cluster (etcd snapshot recommended)
 - Understanding of your cluster's current state and workloads
 
-### ⚠️ Important Safety Notice
+### Important Safety Notice
 
 **CAUTION**: Before executing any command in this guide:
 
