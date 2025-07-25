@@ -28,6 +28,42 @@ This document provides step-by-step instructions for upgrading a Kubernetes clus
 
 ---
 
+### Upgrade Workflow Overview
+
+```
+Kubernetes Cluster Upgrade Process
+│
+├── 📋 PREPARATION
+│   ├── Backup cluster (etcd snapshot)
+│   ├── Review release notes
+│   └── Plan maintenance window
+│
+├── 🎛️ CONTROL PLANE UPGRADE
+│   ├── Update package repository
+│   ├── Find available versions
+│   ├── Upgrade kubeadm
+│   ├── Verify upgrade plan
+│   ├── Apply cluster upgrade
+│   ├── Drain control plane node
+│   ├── Upgrade kubelet & kubectl
+│   ├── Restart kubelet
+│   └── Uncordon control plane node
+│
+├── 👷 WORKER NODES UPGRADE (Repeat for each worker)
+│   ├── Update package repository
+│   ├── Upgrade kubeadm
+│   ├── Drain worker node (from control plane)
+│   ├── Upgrade node configuration
+│   ├── Upgrade kubelet & kubectl
+│   ├── Restart kubelet
+│   └── Uncordon worker node
+│
+└── ✅ POST-UPGRADE VERIFICATION
+├── Verify cluster status
+├── Check component versions
+└── Validate cluster health
+```
+
 ## Part 1: Control Plane Node Upgrade
 
 ### Step 1: Update Package Repository
@@ -242,38 +278,12 @@ kubectl cluster-info
 
 ## Key Points and Best Practices
 
-### Before You Start
-
-- **Backup your cluster:** Always create an etcd snapshot before upgrading
-- **Read release notes:** Review Kubernetes release notes for breaking changes
-- **Test in staging:** Perform the upgrade in a non-production environment first
-- **Plan maintenance window:** Schedule upgrades during low-traffic periods
-
 ### During Upgrade
 
 - **One minor version at a time:** Don't skip minor versions (e.g., 1.31 → 1.32 → 1.33)
 - **Control plane first:** Always upgrade control plane nodes before worker nodes
 - **One node at a time:** Upgrade worker nodes sequentially to maintain availability
 - **Monitor carefully:** Watch for any errors or warnings during each step
-
-### Version Considerations
-
-- Replace all instances of `v1.33` and `1.33.0` with your target version
-- Ensure your target version is supported and compatible with your workloads
-- Check addon compatibility (CNI, CSI drivers, monitoring tools, etc.)
-
-### Troubleshooting
-
-- If a step fails, investigate the error before proceeding
-- Check kubelet logs: `sudo journalctl -u kubelet -f`
-- Verify network connectivity and DNS resolution
-- Ensure sufficient resources (CPU, memory, disk space) on all nodes
-
-### Rollback Considerations
-
-- Keep the previous kubeadm version available for potential rollback
-- Document your current configuration before starting
-- Have a tested rollback procedure ready
 
 ---
 
