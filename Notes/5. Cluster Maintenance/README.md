@@ -166,7 +166,6 @@ sudo mv /etc/kubernetes/manifests/etcd.yaml /etc/kubernetes/manifests/etcd.yaml.
 ```bash
 # Remove old data
 rm -rf /var/lib/etcd
-OR
 # Temp Remove
 mv /var/lib/etcd /var/lib/etcd_bak
 ```
