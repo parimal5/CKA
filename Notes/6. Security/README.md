@@ -225,3 +225,47 @@ kubectl get csr parimal-csr -o jsonpath='{.status.certificate}' | base64 -d > pa
 - [Official K8s Documentation: Certificate Signing Requests](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/)
 - [Managing TLS Certificates in a Cluster](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)
 - [Certificate Signing Request Tutorial](https://kubernetes.io/docs/tasks/tls/certificate-issue-client-csr/)
+
+## KubeConfig:
+
+KubeConfig is a YAML configuration file that contains:
+
+- Clusters: Information about Kubernetes clusters (API server endpoints, certificates)
+- Users: Authentication credentials (certificates, tokens, usernames)
+- Contexts: Combinations of cluster + user + namespace
+- Current Context: The active context kubectl uses by default
+
+1. View Current Configuration
+
+```bash
+kubectl config view
+
+kubectl config view --raw
+```
+
+2. Working with Custom KubeConfig Files
+
+```bash
+kubectl config --kubeconfig=/root/my-kube-config current-context
+
+kubectl config --kubeconfig=/root/my-kube-config use-context research
+```
+
+3. Context Management
+
+```bash
+# List all available contexts
+kubectl config get-contexts
+
+# Show current context
+kubectl config current-context
+
+# Switch to different context
+kubectl config use-context production
+
+# Rename a context
+kubectl config rename-context old-name new-name
+
+# Delete a context
+kubectl config delete-context unused-context
+```
