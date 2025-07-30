@@ -1,6 +1,6 @@
 <div align="center">
   <h1><strong>CKA Exam Notes</strong></h1>
-  <h3>Authorization, RBAC, ABAC, Webhooks</h3>
+  <h3>Authorization, RBAC, ABAC, Webhooks, Service Accounts</h3>
 </div>
 
 ## Authorization Modes
@@ -105,3 +105,69 @@ kubectl create deployment nginx --image=nginx --as dev-user
 - Always use `--dry-run=client -o yaml` to verify before applying
 - Use `kubectl auth can-i` to test permissions
 - **Always use plural form for resources** (`pods`, `deployments`, not `pod`, `deployment`)
+
+# RBAC and Service Account - Quick Reference
+
+## Service Account Operations
+
+### View Service Accounts
+
+```bash
+kubectl get sa
+kubectl describe sa <name>
+```
+
+### Create Service Account
+
+```bash
+kubectl create sa <my-service-account>
+```
+
+### Assign to Pod/Deployment
+
+```yaml
+spec:
+  serviceAccount: my-service-account
+```
+
+### Create Token
+
+```bash
+kubectl create token <name-of-service-account>
+```
+
+## Complete RBAC Workflow
+
+### 1. Create Role
+
+```bash
+kubectl create role my-role --verb=get,list --resource=pod -n dev
+```
+
+### 2. Create Service Account and Token
+
+```bash
+kubectl create sa my-sa -n dev
+kubectl create token my-sa
+```
+
+### 3. Create Role Binding
+
+```bash
+kubectl create rolebinding my-role-rb -n dev --serviceaccount=dev:my-sa --role=my-role
+```
+
+### 4. Assign to Deployment/Pod
+
+```bash
+# Edit deployment
+kubectl edit deployment <name>
+
+# Add to spec:
+spec:
+  template:
+    spec:
+      serviceAccount: my-sa
+```
+
+**Note**: For pods, deletion and recreation required - edit not supported.
