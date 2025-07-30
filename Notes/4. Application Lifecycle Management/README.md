@@ -157,6 +157,31 @@ env:
         key: DB_PASSWORD
 ```
 
+### Private Registry Authentication
+
+For pulling images from private registries, credentials must be provided to Kubernetes.
+
+### 1. Create Docker Registry Secret
+
+```bash
+kubectl create secret docker-registry <secret-name> \
+  --docker-username=<username> \
+  --docker-password=<password> \
+  --docker-email=<email> \
+  --docker-server=<registry-url>
+```
+
+### 2. Attach Secret to Pod/Deployment
+
+```yaml
+spec:
+  containers:
+    - name: private-reg-container
+      image: <your-private-image>
+  imagePullSecrets:
+    - name: <secret-name>
+```
+
 **Key Points:**
 
 - Base64 encoded sensitive data
