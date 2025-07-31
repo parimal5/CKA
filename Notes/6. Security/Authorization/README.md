@@ -1,6 +1,6 @@
 <div align="center">
   <h1><strong>CKA Exam Notes</strong></h1>
-  <h3>Authorization, RBAC, ABAC, Webhooks, Service Accounts</h3>
+  <h3>Authorization, RBAC, Service Accounts, Network Policies</h3>
 </div>
 
 ## Authorization Modes
@@ -171,3 +171,219 @@ spec:
 ```
 
 **Note**: For pods, deletion and recreation required - edit not supported.
+
+## Security Context
+
+### 🔐 Where can securityContext be applied?
+
+- Pod-level: applies to all containers in the pod.
+- Container-level: overrides pod-level settings for individual containers.
+
+```yaml
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  containers:
+    - name: app
+      image: nginx
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+```
+
+---
+
+When you don’t specify a securityContext in your Kubernetes manifests, Kubernetes simply doesn’t enforce any security constraints for user ID, privileges, or filesystem behavior.
+
+- Containers may run as root
+- Privilege escalation allowed
+- Unrestricted Linux capabilities
+- Writable root filesystem
+
+---
+
+When you define securityContext at both the Pod and Container levels
+
+- Kubernetes prioritizes container-level securityContext over the pod-level one for any overlapping fields.
+
+```yaml
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+    securityContext:
+      runAsUser: 1111 # Overrides pod-level runAsUser
+```
+
+---
+
+Some option are POD Level and Some are Container:
+| Field | Scope | Description |
+|---------------------------|-------------|-----------------------------------------------------------------------------|
+| runAsUser | Pod/Container | UID to run the process as. Container-level overrides Pod-level. |
+| runAsGroup | Pod/Container | GID to run the process as. Container-level overrides Pod-level. |
+| runAsNonRoot | Pod/Container | Ensures the container does not run as root. |
+| fsGroup | Pod | Group ID for all volumes; useful for shared storage access. |
+| allowPrivilegeEscalation | Container | Prevents processes from gaining more privileges (e.g., via `sudo`). |
+| privileged | Container | Gives container full host access. Avoid unless absolutely needed. |
+| readOnlyRootFilesystem | Container | Makes root filesystem read-only. Good for hardening. |
+| capabilities | Container | Fine-grained control over Linux capabilities (add/drop specific ones). |
+
+## NetworkPolicy
+
+A Kubernetes resource that controls traffic flow (Ingress/Egress) at IP/port level for pods in a namespace.
+
+> 🧠 **Key Point**: By default, all traffic is allowed between pods. Once NetworkPolicy is applied, pods become isolated and only allow defined traffic.
+
+### Basic Structure
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: example-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: database # Selects pods this policy applies to
+  policyTypes:
+    - Ingress # Control incoming traffic
+    - Egress # Control outgoing traffic
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend
+      ports:
+        - protocol: TCP
+          port: 3306
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.0/24
+      ports:
+        - protocol: TCP
+          port: 5432
+```
+
+### Example Scenario
+
+**Setup**:
+
+- Internal pod (frontend)
+- DB pod (database)
+- External backup server: `192.172.52.10`
+
+**Requirement**:
+
+- Only internal pod can access DB pod
+- DB pod can send data to backup server
+
+### Solution Breakdown
+
+#### 1. Target Pod Selection
+
+```yaml
+podSelector:
+  matchLabels:
+    app: database # Apply policy to DB pods
+```
+
+#### 2. Allow Incoming Traffic (Ingress)
+
+```yaml
+ingress:
+  - from:
+      - podSelector:
+          matchLabels:
+            app: internal # Only internal pods can access
+    ports:
+      - protocol: TCP
+        port: 3306 # MySQL port
+```
+
+#### 3. Allow Outgoing Traffic (Egress)
+
+```yaml
+egress:
+  - to:
+      - ipBlock:
+          cidr: 192.172.52.10/32 # Specific backup server
+    ports:
+      - protocol: TCP
+        port: 5978
+```
+
+### Key Rules to Remember
+
+#### Selector Types
+
+- `podSelector`: Select pods by labels
+- `namespaceSelector`: Select entire namespaces
+- `ipBlock`: Select IP ranges (external traffic)
+
+#### Traffic Direction
+
+- `ingress`: Incoming traffic TO the selected pods
+- `egress`: Outgoing traffic FROM the selected pods
+
+### Important Notes
+
+⚡ **Stateful Traffic**: NetworkPolicies are stateful - if incoming traffic is allowed, the response is automatically allowed back.
+
+🎯 **Think from Pod's Perspective**: Always consider from the viewpoint of the pod whose traffic you're controlling.
+
+#### Common Commands
+
+```bash
+# List network policies
+kubectl get networkpolicy
+kubectl get netpol
+
+# List in specific namespace
+kubectl get netpol -n <namespace>
+
+# Describe policy details
+kubectl describe netpol <policy-name> -n <namespace>
+
+# Delete network policy
+kubectl delete netpol <policy-name> -n <namespace>
+```
+
+### Quick Reference Patterns
+
+### Allow All Ingress
+
+```yaml
+ingress:
+  - {}
+```
+
+### Allow All Egress
+
+```yaml
+egress:
+  - {}
+```
+
+### Block All Traffic
+
+```yaml
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+```
+
+### Allow from Same Namespace
+
+```yaml
+ingress:
+  - from:
+      - podSelector: {}
+```
