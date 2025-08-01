@@ -3,7 +3,7 @@
   <h3>Authorization, RBAC, Service Accounts, Network Policies</h3>
 </div>
 
-## Authorization Modes
+## Authorization Modes:
 
 - **Node** - Node authorization
 - **RBAC** - Role-Based Access Control
@@ -96,7 +96,7 @@ kubectl get pods --as dev-user
 kubectl create deployment nginx --image=nginx --as dev-user
 ```
 
-## Key Points
+### Key Points
 
 - **Role** = permissions within a namespace
 - **ClusterRole** = permissions across entire cluster
@@ -105,8 +105,6 @@ kubectl create deployment nginx --image=nginx --as dev-user
 - Always use `--dry-run=client -o yaml` to verify before applying
 - Use `kubectl auth can-i` to test permissions
 - **Always use plural form for resources** (`pods`, `deployments`, not `pod`, `deployment`)
-
-# RBAC and Service Account - Quick Reference
 
 ## Service Account Operations
 
@@ -136,7 +134,7 @@ spec:
 kubectl create token <name-of-service-account>
 ```
 
-## Complete RBAC Workflow
+### Complete RBAC Workflow
 
 ### 1. Create Role
 
@@ -337,6 +335,45 @@ egress:
 
 🎯 **Think from Pod's Perspective**: Always consider from the viewpoint of the pod whose traffic you're controlling.
 
+### **Can I use either Ingress or Egress to achieve the same scenario?**
+
+Yes, in most cases, you can achieve the same effect using either:
+
+- Ingress policy on the target pods , or
+- Egress policy on the source pod
+
+| Policy Type | Controls...                      | Use When...                                                  |
+| ----------- | -------------------------------- | ------------------------------------------------------------ |
+| **Ingress** | Who can **access** the pod       | You want to protect a sensitive service (`db`, `payroll`)    |
+| **Egress**  | Where a pod can **send** traffic | You want to limit a pod's reach or control data exfiltration |
+
+Example: Apply to db to allow traffic to db only from internal-app
+
+```yaml
+# This says "Only internal-app is allowed to reach db"
+podSelector: name: db
+ingress:
+  from:
+    - podSelector: name: internal-app
+
+```
+
+Example: Apply to internal-app to allow traffic from internal-app only to db and payroll
+
+```yaml
+# This says "internal-app can only talk to db:3306 and payroll:8080"
+podSelector: name: internal-app
+egress:
+  - to:
+      - podSelector: name: db
+    ports:
+      - port: 3306
+  - to:
+      - podSelector: name: payroll
+    ports:
+      - port: 8080
+```
+
 #### Common Commands
 
 ```bash
@@ -387,3 +424,5 @@ ingress:
   - from:
       - podSelector: {}
 ```
+
+---
