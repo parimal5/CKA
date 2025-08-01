@@ -393,21 +393,21 @@ kubectl delete netpol <policy-name> -n <namespace>
 
 ### Quick Reference Patterns
 
-### Allow All Ingress
+#### Allow All Ingress
 
 ```yaml
 ingress:
   - {}
 ```
 
-### Allow All Egress
+#### Allow All Egress
 
 ```yaml
 egress:
   - {}
 ```
 
-### Block All Traffic
+#### Block All Traffic
 
 ```yaml
 spec:
@@ -417,7 +417,7 @@ spec:
     - Egress
 ```
 
-### Allow from Same Namespace
+#### Allow from Same Namespace
 
 ```yaml
 ingress:
@@ -426,3 +426,50 @@ ingress:
 ```
 
 ---
+
+## Custom Resource Definition
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: <spec.names.plural + "." + spec.group>  # e.g., "datacenters.traffic.controller"
+spec:
+  group: <your-group-name>  # e.g., "traffic.controller"
+  versions:
+    - name: <version-name>  # e.g., "v1"
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                <field-name-1>:
+                  type: <data-type>  # e.g., string, integer, boolean
+                <field-name-2>:
+                  type: <data-type>
+                ...
+  scope: <Namespaced|Cluster>  # Choose "Namespaced" or "Cluster"
+  names:
+    plural: <plural-form>       # e.g., "datacenters"
+    singular: <singular-form>   # e.g., "datacenter"
+    kind: <Kind>                # e.g., "Global"
+    shortNames:
+      - <short-name>            # e.g., "glb"
+```
+
+## Custom Resource
+
+```yaml
+apiVersion: <spec.group>/<version-name>  # e.g., "traffic.controller/v1"
+kind: <Kind>  # Must match spec.names.kind
+metadata:
+  name: <custom-resource-name>  # e.g., "datacenter"
+spec:
+  <field-name-1>: <value-of-correct-type>  # Match the schema defined in the CRD
+  <field-name-2>: <value-of-correct-type>
+  ...
+```
