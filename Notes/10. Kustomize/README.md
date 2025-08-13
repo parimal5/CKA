@@ -543,6 +543,208 @@ kustomize build overlays/prod/ | kubectl apply --dry-run=client -f -
 kubectl apply -k overlays/prod/
 ```
 
+## Componenets
+
+## What is a Component?
+
+A reusable piece of Kustomize configuration that can be mixed into multiple kustomizations.
+
+## Basic Component Structure
+
+### Component Definition (`monitoring/kustomization.yaml`)
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - prometheus.yaml
+  - grafana.yaml
+
+patches:
+  - path: add-monitoring-labels.yaml
+    target:
+      kind: Deployment
+```
+
+### Using Components (`main/kustomization.yaml`)
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - app.yaml
+
+components:
+  - ../monitoring
+  - ../security
+```
+
+## Quick Examples
+
+### 1. Monitoring Component
+
+```yaml
+# components/monitoring/kustomization.yaml
+kind: Component
+resources:
+  - serviceMonitor.yaml
+patches:
+  - patch: |-
+      - op: add
+        path: /metadata/annotations/prometheus.io~1scrape
+        value: "true"
+    target:
+      kind: Service
+```
+
+### 2. Security Component
+
+```yaml
+# components/security/kustomization.yaml
+kind: Component
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/securityContext
+        value:
+          runAsNonRoot: true
+          runAsUser: 1000
+    target:
+      kind: Deployment
+```
+
+### 3. Using Multiple Components
+
+```yaml
+# overlays/prod/kustomization.yaml
+kind: Kustomization
+resources:
+  - ../../base
+
+components:
+  - ../../components/monitoring
+  - ../../components/security
+  - ../../components/backup
+```
+
+## Component vs Base/Overlay
+
+- **Component**: Optional, reusable addon
+- **Base**: Core configuration
+- **Overlay**: Environment-specific changes
+
+## Key Gotchas ⚠️
+
+### 1. Component Order Matters
+
+```yaml
+components:
+  - ../security # Applied first
+  - ../monitoring # Applied second (can override security)
+```
+
+### 2. No Resources in Component Root
+
+❌ **Wrong**: Put resources directly in component kustomization
+
+```yaml
+kind: Component
+resources:
+  - deployment.yaml
+patches:
+  - patch: |-
+      # This patch might conflict with the deployment above
+```
+
+✅ **Better**: Keep components focused on patches/additions
+
+### 3. Namespace Handling
+
+Components don't automatically inherit namespace from main kustomization:
+
+```yaml
+# Component needs explicit namespace if required
+kind: Component
+namespace: monitoring # Add this if component resources need specific namespace
+```
+
+### 4. Path References
+
+Components use relative paths from their own location:
+
+```yaml
+# In components/monitoring/kustomization.yaml
+resources:
+  - ./prometheus.yaml # Relative to component directory
+  - ../shared/config.yaml # Not relative to main kustomization
+```
+
+### 5. Transformer Conflicts
+
+Multiple components applying same transformation can conflict:
+
+```yaml
+# Component A adds label: app=foo
+# Component B adds label: app=bar
+# Result: Only last one wins (app=bar)
+```
+
+## Common Patterns
+
+### Environment-Specific Components
+
+```yaml
+# staging/kustomization.yaml
+components:
+- ../components/debug
+- ../components/low-resources
+
+# prod/kustomization.yaml
+components:
+- ../components/monitoring
+- ../components/security
+- ../components/backup
+```
+
+### Feature Flags
+
+```yaml
+# Enable optional features
+components:
+  - ../components/redis # Only if caching needed
+  - ../components/metrics # Only if monitoring needed
+```
+
+### Conditional Inclusion
+
+```bash
+# Use environment variable to conditionally include
+kustomize build . --enable-alpha-plugins \
+  $([ "$ENABLE_MONITORING" = "true" ] && echo "--component ../monitoring")
+```
+
+## Testing Components
+
+```bash
+# Test component in isolation
+cd components/monitoring
+kustomize build .
+
+# Test with main kustomization
+cd main
+kustomize build .
+```
+
+## Best Practices
+
+- Keep components small and focused
+- Use descriptive component names
+- Test components independently
+- Document component dependencies
+- Avoid circular dependencies between components
+
 ## Common Use Cases
 
 ### 1. Environment-Specific Images
