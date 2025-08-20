@@ -15,9 +15,19 @@ Use `--dry-run=client -o yaml > filename.yaml` to quickly generate manifest file
 
 ---
 
+<h2 align="center"><strong>Manual Scheduling</strong></h2>
+
+```yaml
+nodeName: node01
+```
+
 <h2 align="center"><strong>⚠️ Taints & 🛡️ Tolerations</strong></h2>
 
 ### Tainting a Node
+
+```bash
+kubectl get nodes -o custom-columns=NAME:.metadata.name,TAINTS:.spec.taints
+```
 
 ```bash
 kubectl taint nodes node-name key=value:effect
@@ -43,6 +53,12 @@ tolerations:
 ```
 
 > **Note**: There are only 2 types of operators `Equal` and `Exists`
+
+```bash
+kubectl describe node <node-name> | grep -i taints:  # Check nodes are tainted
+
+kubectl get pod <pod> -o yaml | grep -A5 tolerations: # Check pods are tolarated
+```
 
 ### Removing Taints from a Node
 
@@ -89,15 +105,17 @@ kubectl label node <node-name> <key>-
 
 ```yaml
 spec:
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: zone
-                operator: In
-                values:
-                  - east
+  metadata:
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: zone
+                  operator: In
+                  values:
+                    - east
 ```
 
 ### Common Operators
