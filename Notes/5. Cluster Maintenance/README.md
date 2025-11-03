@@ -116,7 +116,16 @@ spec:
         - --snapshot-count=10000
         - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt # cacert
 ```
+### ✅ Which endpoint to use for snapshot?
 
+You should connect to the client endpoint (`--listen-client-urls` or `--advertise-client-urls`) — not the peer or metrics one.
+
+From your config, valid client endpoints are:
+
+```txt
+https://127.0.0.1:2379 (loopback)
+https://172.18.0.4:2379 (container/host network)
+```
 Key information needed:
 
 - **Endpoints**:
