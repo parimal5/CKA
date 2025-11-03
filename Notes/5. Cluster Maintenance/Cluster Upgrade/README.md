@@ -66,6 +66,12 @@ Kubernetes Cluster Upgrade Process
 
 ## Part 1: Control Plane Node Upgrade
 
+Check the latest version available:
+
+```bash
+kubeadm upgrade plan
+```
+
 ### Step 1: Update Package Repository
 
 Update the Kubernetes package repository to point to your target version:
