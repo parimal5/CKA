@@ -228,6 +228,12 @@ KubeConfig is a YAML configuration file that contains:
 - Contexts: Combinations of cluster + user + namespace
 - Current Context: The active context kubectl uses by default
 
+### How to set new kubeconfig file as default without overriding  the existing file?
+
+- KUBECONFIG environment variable to point to your kubeconfig file.
+- export KUBECONFIG=/root/my-new-kube-config
+- To make it persist across reboots and new shell sessions add this env variable in `.bashrc`.
+
 1. View Current Configuration
 
 ```bash
