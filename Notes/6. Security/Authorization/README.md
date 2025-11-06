@@ -125,7 +125,7 @@ kubectl create sa <my-service-account>
 
 ```yaml
 spec:
-  serviceAccount: my-service-account
+  serviceAccountName: my-service-account
 ```
 
 ### Create Token
