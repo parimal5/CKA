@@ -5,7 +5,20 @@
 
 ---
 
-## 📚 Table of Contents
+## 📚 Table of
+
+### Topic Overview
+
+| Authentication               | Authorization              |
+| ---------------------------- | -------------------------- |
+| Certificate Basics           | Authorization Modes        |
+| Kubernetes mTLS Architecture | RBAC Components Overview   |
+| Kubernetes Certificate API   | Service Account Operations |
+| KubeConfig                   | Image Security             |
+|                              | Security Context           |
+|                              | NetworkPolicy              |
+|                              | Custom Resource Definition |
+|                              | Custom Resource            |
 
 ### Core Security Concepts
 

@@ -170,6 +170,19 @@ spec:
 
 **Note**: For pods, deletion and recreation required - edit not supported.
 
+## Image Security
+
+Suppose you have image stored in private registery then your kubernetes need permisssion to pull image from that repo.
+
+For that you will create a secret of docker-registry
+
+and then use under `spec.template.spec.` in deployment.
+
+```yaml
+imagePullSecrets:
+  - name: private-reg-secret
+```
+
 ## Security Context
 
 ### 🔐 Where can securityContext be applied?

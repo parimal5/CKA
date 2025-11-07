@@ -20,6 +20,9 @@ kubectl top nodes
 kubectl top node <node-name>
 kubectl top pods --all-namespaces
 kubectl top pod <pod-name> -n <namespace>
+kubectl top pod <pod-name> -n <namespace>
+kubectl top pod --sort-by=memory
+kubectl top pod --sort-by=cpu
 ```
 
 ## Logging

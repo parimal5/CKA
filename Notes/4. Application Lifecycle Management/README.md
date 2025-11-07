@@ -59,6 +59,30 @@ strategy:
 | `ENTRYPOINT`   | `command`        | Overrides entrypoint in image |
 | `CMD`          | `args`           | Passed as args to entrypoint  |
 
+### For Passing Command to the POD
+
+```bash
+kubectl run ngninx-pod --image nginx --command python app.py
+```
+
+```yaml
+- command:
+    - python
+    - app.py
+```
+
+### For Passing args to the pod
+
+```bash
+kubectl run ngninx-pod --image nginx -- "--color" blue
+```
+
+```yaml
+- args:
+    - --color
+    - green
+```
+
 ## Configuring Environment Variables
 
 Direct assignment of key-value pairs in Pod/Deployment spec:
