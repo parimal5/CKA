@@ -5,20 +5,20 @@
 
 ---
 
-## 📚 Table of
+## 📚 Table of Contents
 
 ### Topic Overview
 
-| Authentication               | Authorization              |
-| ---------------------------- | -------------------------- |
-| Certificate Basics           | Authorization Modes        |
-| Kubernetes mTLS Architecture | RBAC Components Overview   |
-| Kubernetes Certificate API   | Service Account Operations |
-| KubeConfig                   | Image Security             |
-|                              | Security Context           |
-|                              | NetworkPolicy              |
-|                              | Custom Resource Definition |
-|                              | Custom Resource            |
+| Authentication                                                                          | Authorization                                                                      |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [Certificate Basics](./Authentication/README.md#certificate-basics)                     | [Authorization Modes](./Authorization/README.md#authorization-modes)               |
+| [Kubernetes mTLS Architecture](./Authentication/README.md#kubernetes-mtls-architecture) | [RBAC Components Overview](./Authorization/README.md#rbac-components-overview)     |
+| [Kubernetes Certificate API](./Authentication/README.md#kubernetes-certificate-api)     | [Service Account Operations](./Authorization/README.md#service-account-operations) |
+| [KubeConfig](./Authentication/README.md#kubeconfig)                                     | [Image Security](./Authorization/README.md#image-security)                         |
+|                                                                                         | [Security Context](./Authorization/README.md#security-context)                     |
+|                                                                                         | [NetworkPolicy](./Authorization/README.md#networkpolicy)                           |
+|                                                                                         | [Custom Resource Definition](./Authorization/README.md#custom-resource-definition) |
+|                                                                                         | [Custom Resource](./Authorization/README.md#custom-resource)                       |
 
 ### Core Security Concepts
 
