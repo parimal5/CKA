@@ -110,6 +110,15 @@ Look for `--cluster-cidr=172.17.0.0/16` This is POD's IP range
 - ` cat /etc/kubernetes/manifest/kube-apiserver.yaml`
 - Look for flag `--service-cluster-ip-range=172.20.0.0/16`
 
+### Delete CNI from a cluster
+
+- If you want to delete a `CNI` from a cluster instead of deleting the resources, such as `DaemonSet`, `ConfigMap`, `Deployment`, etc., simply delete the entire `namespace`.
+- Delete the config file under `/etc/cni/net.d/xxx.config
+
+### Installing CNI in cluster
+- If you are installing new CNI and you need to chage the `CICR range` first download the `CustomResource` yaml file you can get the link from official docs and `curl` that command to get ti downloded.
+- And then simply do kubectl apply -f /test.yml to apply the changes.
+
 # Kubernetes Ingress Quick Reference
 
 ## Basic Ingress Creation
