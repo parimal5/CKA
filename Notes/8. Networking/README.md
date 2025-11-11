@@ -59,6 +59,12 @@ netstat -h # Help
 netstat -tnlp
 ```
 
+How to check that what is the default network interface is being used to route traffic from a node?
+
+```bash
+ip route show default
+```
+
 ## CNI
 
 ![alt text](image-1.png)
