@@ -225,7 +225,38 @@ kubectl create ingress multipath \
 
 > **Note:** Remove the host part for any-host rules, remove the path part for root-path rules.
 
-# Kubernetes Gateway API Quick Reference
+#### Thing to remember: (Do not use TargetPort: ?)
+
+```bash
+controlplane ~ ✖ k describe svc -n critical-space pay-service
+Name:                     pay-service
+Namespace:                critical-space
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=webapp-pay
+Type:                     ClusterIP
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       172.20.86.120
+IPs:                      172.20.86.120
+Port:                     <unset>  8282/TCP # This is the port we need to use ingress to forward traffic correctely.
+TargetPort:               8080/TCP
+Endpoints:                172.17.0.11:8080
+Session Affinity:         None
+Internal Traffic Policy:  Cluster
+Events:                   <none>
+```
+
+- When we create an ingress as we know we route traffic to an svc and then that svc forward traffic to underlying pods.
+- For sending that traffic to svc we need name of the svc and the port of the svc.
+
+How to find the correct SVC port?
+
+- As we known the svc has 2 main ports
+  - `Service Port(8282)` :- to which the ingress send the traffic to.
+  - `Target Port(8080)` :- this is used by svc to forward traffic to the pods.
+
+# Kubernetes Gateway API
 
 ## Overview
 
