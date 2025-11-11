@@ -119,6 +119,14 @@ Look for `--cluster-cidr=172.17.0.0/16` This is POD's IP range
 - If you are installing new CNI and you need to chage the `CICR range` first download the `CustomResource` yaml file you can get the link from official docs and `curl` that command to get ti downloded.
 - And then simply do kubectl apply -f /test.yml to apply the changes.
 
+### How to chekc what kind of proxy the  `kube-proxy` uses?
+```bash
+# Check the first line of the proxy 
+kubectl logs -n kube-system kube-proxy-pod-xxx
+```
+<img width="830" height="99" alt="image" src="/kube-proxy.png" />
+
+
 # Kubernetes Ingress Quick Reference
 
 ## Basic Ingress Creation
