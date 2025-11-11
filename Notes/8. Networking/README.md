@@ -117,7 +117,7 @@ Look for `--cluster-cidr=172.17.0.0/16` This is POD's IP range
 
 ### Installing CNI in cluster
 
-- If you are installing new CNI and you need to chage the `CICR range` first download the `CustomResource` yaml file you can get the link from official docs and `curl` that command to get ti downloded.
+- If you are installing new CNI and you need to chage the `CICR range` first download the `CustomResource` yaml file you can get the link from official docs and `curl` that command to get to downloded.
 - And then simply do kubectl apply -f /test.yml to apply the changes.
 
 ### How to chekc what kind of proxy the `kube-proxy` uses?
@@ -129,7 +129,28 @@ kubectl logs -n kube-system kube-proxy-pod-xxx
 
 ![Image](./kube-proxy.png)
 
-# Kubernetes Ingress Quick Reference
+## CoreDNS
+
+| Where are the pods?         | How to access the service                                  | Example                                 |
+| --------------------------- | ---------------------------------------------------------- | --------------------------------------- |
+| ✅ **Same namespace**       | Use just the service name                                  | `web-service`                           |
+| 🌐 **Different namespace**  | Use `service.namespace`                                    | `web-service.payroll`                   |
+| 🧱 **(Optional full name)** | `service.namespace.svc.cluster.local` (not usually needed) | `web-service.payroll.svc.cluster.local` |
+
+Eg.
+
+When Pod in `payroll` namespace wants to access the pod in `hr` namespace
+
+So the instead of calling the service for `hr` namesapce with just name we have to call with `service.namespace` just calling with `service` will not be rechable in differnet namespace it will only work in same namespace.
+
+```bash
+# From test pod in default namespace
+curl http://web-service          # Works if service is also in default
+curl http://web-service.payroll  # Works if service is in payroll namespace
+
+```
+
+# Kubernetes Ingress
 
 ## Basic Ingress Creation
 
