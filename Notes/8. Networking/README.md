@@ -160,6 +160,8 @@ curl http://web-service.payroll  # Works if service is in payroll namespace
 kubectl create ingress critical-ingress --rule=/pay=pay-service:8080 --annotation=nginx.ingress.kubernetes.io/rewrite-target=/
 ```
 
+> Ingress Resources in namespace scoped so always crete ns in the same ns as you application.
+
 **Generated YAML:**
 
 ```yaml
