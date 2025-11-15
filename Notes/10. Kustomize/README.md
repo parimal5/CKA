@@ -25,6 +25,29 @@ kubectl apply -k overlays/staging/
 kustomize build overlays/staging/
 ```
 
+## Exam Tip:
+
+The kustomization.yaml file is tiny.
+You only need to remember 5 simple fields:
+
+```bash
+resources:
+patchesStrategicMerge:
+images:
+commonLabels:
+commonAnnotations:
+
+```
+
+### 🎯 Here is the strategy successful candidates use.
+
+_STEP 1_: copy base YAML → use as patch
+_STEP 2_: add minimal kustomization.yaml
+_STEP 3_: test with kubectl kustomize .
+_STEP 4_: apply with kubectl apply -k .
+
+That’s it.
+
 ### Approach 1: Directory-based Resources
 
 Each directory has its own `kustomization.yaml` file and Kustomize automatically scans it to create the resource:
