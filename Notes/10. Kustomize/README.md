@@ -16,7 +16,7 @@ kubectl diff -k overlays/staging/
 2. Apply the configuration
 
 ```bash
-kubectl apply -k overlays/staging/\
+kubectl apply -k overlays/staging/
 ```
 
 3. View the final rendered YAML
