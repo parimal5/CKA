@@ -7,15 +7,23 @@
 
 ## Directory Structure Management
 
-Dry-run
+1.  Dry-run (See what will change)
 
+```bash
 kubectl diff -k overlays/staging/
+```
 
-apply
-kubectl apply -k overlays/staging/
+2. Apply the configuration
 
-view fuinal yaml
+```bash
+kubectl apply -k overlays/staging/\
+```
+
+3. View the final rendered YAML
+
+```bash
 kustomize build overlays/staging/
+```
 
 ### Approach 1: Directory-based Resources
 
