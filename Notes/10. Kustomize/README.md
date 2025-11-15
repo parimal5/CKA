@@ -122,6 +122,15 @@ images:
     newTag: "1.2.4" # New tag
 ```
 
+#### Update both:
+
+```yaml
+images:
+  - name: nginx
+    newName: redis
+    newTag: "1.2.4"
+```
+
 ### Complete Transformer Solution
 
 ```yaml
@@ -153,6 +162,89 @@ resources:
 ```
 
 Other common transformers: `commonAnnotations`, `namePrefix`, `nameSuffix`
+
+### MOST important Kustomize transformers for CKA exam:
+
+1. images: (MOST IMPORTANT)
+
+What it does: Override image name, tag, or both.
+
+```yaml
+images:
+  - name: nginx
+    newTag: "1.25.1"
+```
+
+Use case (CKA-style):
+
+- Update the nginx image to tag 1.25.1 in an overlay.
+
+2. patchesStrategicMerge:
+
+What it does: Apply partial YAML patches to modify resources.
+
+```yaml
+# kustomization.yaml
+
+patchesStrategicMerge:
+  - patch.yaml
+```
+
+```yaml
+# patch.yaml:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+```
+
+3. resources:
+
+What it does: Include base manifests or directories.
+
+```yaml
+resources:
+  - ../../base
+  - service.yaml
+```
+
+Reference base folder + overlay resources.
+
+4. commonLabels:
+
+What it does: Add a label to ALL resources.
+
+```yaml
+commonLabels:
+  env: prod
+```
+
+Add "env: prod" to every object (Deployment, Service, CM, etc.).
+
+5. commonAnnotations:
+
+What it does: Add annotations to all resources.
+
+```yaml
+commonAnnotations:
+  owner: devops-team
+```
+
+Add auditing or tracking annotations.
+
+6. configMapGenerator:
+
+What it does: Generate a ConfigMap via literals or files.
+
+```yaml
+configMapGenerator:
+  - name: app-config
+    literals:
+      - LOG_LEVEL=debug
+```
 
 ## Patches
 
