@@ -165,7 +165,7 @@ Other common transformers: `commonAnnotations`, `namePrefix`, `nameSuffix`
 
 ### MOST important Kustomize transformers for CKA exam:
 
-1. images: (MOST IMPORTANT)
+1. **images: (MOST IMPORTANT)**
 
 What it does: Override image name, tag, or both.
 
@@ -179,14 +179,14 @@ Use case (CKA-style):
 
 - Update the nginx image to tag 1.25.1 in an overlay.
 
-2. patchesStrategicMerge:
+2. **patchesStrategicMerge:**
 
 What it does: Apply partial YAML patches to modify resources.
 
 ```yaml
 # kustomization.yaml
 
-patchesStrategicMerge:
+patches:
   - patch.yaml
 ```
 
@@ -201,7 +201,7 @@ spec:
   replicas: 3
 ```
 
-3. resources:
+3. **resources:**
 
 What it does: Include base manifests or directories.
 
@@ -213,29 +213,40 @@ resources:
 
 Reference base folder + overlay resources.
 
-4. commonLabels:
+4. **commonLabels: OR labels:**
 
 What it does: Add a label to ALL resources.
 
 ```yaml
+## deprecated in and removed in future
 commonLabels:
   env: prod
+# OR
+labels:
+  - pairs:
+      env: prod
 ```
 
 Add "env: prod" to every object (Deployment, Service, CM, etc.).
 
-5. commonAnnotations:
+5. **commonAnnotations: OR annotations:**
 
 What it does: Add annotations to all resources.
 
 ```yaml
+## deprecated in and removed in future
 commonAnnotations:
   owner: devops-team
+# OR
+
+annotations:
+  - pairs:
+      owner: devops-team
 ```
 
 Add auditing or tracking annotations.
 
-6. configMapGenerator:
+6. **configMapGenerator:**
 
 What it does: Generate a ConfigMap via literals or files.
 
@@ -281,6 +292,17 @@ patches:
       - op: replace
         path: /metadata/name
         value: web-deployment
+```
+
+Some time the just mentioning the kind and name won't work in target section then add addional fields
+
+```yaml
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: mongo-deployment
 ```
 
 #### Update Replica Count
