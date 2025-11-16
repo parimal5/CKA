@@ -239,6 +239,7 @@ commonAnnotations:
   owner: devops-team
 # OR
 
+## sometime won't work need import so used above if not deprected and removed.
 annotations:
   - pairs:
       owner: devops-team
