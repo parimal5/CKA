@@ -45,6 +45,18 @@ kubectl set image my-dep busybox=busybox:1.35
 - `nginx=nginx:1.25` format is `container=image`
 - Use `kubectl describe` to get container name
 
+## Image Using Digest
+
+An image digest is a SHA256 hash of the container image manifest. It looks like this:
+
+```bash
+nginx@sha256:53a09ca0c35beef24e...
+```
+
+```bash
+kubectl run mypod --image=nginx@sha256:53a09ca0c35bee...
+```
+
 <h2 align="center"><strong>🌐 Service</strong></h2>
 
 ### Creating a new Service

@@ -62,6 +62,11 @@
 4. On control-plane node: `docker ps | grep kube` or `crictl ps` to see static pod containers
 5. Check `/var/log` or `journalctl -xeu kubelet` for static pod creation errors
 
+### kube-proxy issue
+
+1. The config file for `kube-proxy` is stored as `configMap`.
+2.
+
 ### etcd specific
 
 - Health check:
