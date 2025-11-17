@@ -106,4 +106,20 @@ kubectl run pod my-pod --image=nginx --port=80 --expose=true
 kubectl replace --force -f pod.yaml
 ```
 
+## `kubectl explain` command
+
+kubectl explain is used to view API documentation / schema / field descriptions directly from your Kubernetes cluster.
+
+```bash
+kubectl explain pod
+```
+
+Get Specific Field Details:
+
+```bash
+kubectl explain pod.spec
+kubectl explain pod.spec.containers
+kubectl explain pod.spec.containers.image
+```
+
 [Part-2: Scheduling](../2.%20Scheduling/README.md)
