@@ -102,6 +102,14 @@ kubectl rollout restart deploy/api
 kubectl rollout undo deploy/api
 ```
 
+### `--command`
+
+- This flag only work with pod created using `run` command
+- Do not work with `create` command.
+- `kubectl create deployment -- sleep 3500`
+- Use `sh -c` when you have to give multiple commands
+- `kubectl create deployment -- sh -c echo "Parimal" && sleep 10`
+
 ### API Server Issues
 
 Check if the apiserver pod is running or exited state:
@@ -130,3 +138,52 @@ Check if the apiserver pod is running or exited state:
       - And when its connection issue that means api server is not able to reach etcd.
       - Sometime you get error as below again same issue the etcd server ip or port is wrong.
     - `Error while dialing dial tcp: address this-is-very-wrong: missing port in address. Reconnecting...`
+
+### Service Account Role and RoleBiding
+
+If the question mention to give `read-access` then use `--verb=get,list,watch`
+
+### Network Policy
+
+- If you need to `deny all ingress or egreess` rule. Just do not specify any rule in yaml and it will create the polilcy that denyt everything.
+- in Network Policy you ahve to select podSelector
+
+```yaml
+spec:
+  podSelector: # Target --> Who this policy is applied to.
+    matchLabels:
+      role: db
+  policyTypes:
+    - Ingress
+  ingress:
+    - from: # Which Pod can send ingress traffic to our target.
+        - podSelector:
+            matchLabels:
+              role: frontend
+        - namespaceSelector: # Which Namespace can send ingress traffic to our target.
+            matchLabels:
+              project: myproject
+```
+
+- ⚡Important: If you need target as complete `namespace` instead of the `pod` as in above example
+
+```yaml
+spec:
+  podSelector: {} # This will target all the resources in the namespace.
+```
+
+### ETCD Backup and Restore
+
+- You already have commannd in docs for back and restore.
+- Workflow for restoring the db:
+  - First make sure `api-server` is stopped state.
+  - `--data-dir=/var/lib/etcd` is where we need to resotre that data but make sure you either move out the data from this path or rename it to something else.
+
+```bash
+mv /var/lib/etcd /var/lib/etcd.bak
+mkdir /var/lib/etcd
+
+# OR you can delte and recreate too.
+```
+
+- Afte doing this then you are ready to restore the backup
