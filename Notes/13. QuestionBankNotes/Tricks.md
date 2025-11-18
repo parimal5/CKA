@@ -177,6 +177,8 @@ spec:
 - You already have commannd in docs for back and restore.
 - Workflow for restoring the db:
   - First make sure `api-server` is stopped state.
+    - `BACKUP` = online OK
+    - `RESTORE` = offline required
   - `--data-dir=/var/lib/etcd` is where we need to resotre that data but make sure you either move out the data from this path or rename it to something else.
 
 ```bash
