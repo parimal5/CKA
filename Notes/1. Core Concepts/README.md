@@ -26,7 +26,11 @@ kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=ngin
 #### Common Flags
 
 - `--restart`= `Always`(Default), `OnFailure`, `Never`
-- `--command -- sleep 3600`
+- `--command -- sleep 3600` (only for pod creation i.e. kubectl run command not with kubectl create depoy)
+- For creating deploy: anything after `--` will be added as command
+  - ```bash
+    kubectl create deploy busybox-cmd --image=busybox --replicas=2 -- sleep 3600
+    ```
 
 <h2 align="center"><strong>📦 Deployment</strong></h2>
 
@@ -36,7 +40,18 @@ kubectl run my-nginx --image=nginx --port=80 --env="ENV=PROD" --labels="app=ngin
 kubectl create deployment my-dep --image=busybox --replicas=3 --port=80
 ```
 
-### Updating Image
+### `kubectl set`
+
+Available Commands:
+
+- `env` : Update environment variables on a pod template
+- `image` : Update the image of a pod template
+- `resources` : Update resource requests/limits on objects with pod templates
+- `selector` : Set the selector on a resource
+- `serviceaccount`: Update the service account of a resource
+- `subject` : Update the user, group, or service account in a role binding or cluster role binding
+
+1. Updating Image
 
 ```bash
 kubectl set image my-dep busybox=busybox:1.35
@@ -44,6 +59,12 @@ kubectl set image my-dep busybox=busybox:1.35
 
 - `nginx=nginx:1.25` format is `container=image`
 - Use `kubectl describe` to get container name
+
+2. Updating the resource
+
+```bash
+kubectl set resources deploy busybox-cmd  --limits='cpu=100m,memory=128Mi' --requests='cpu=50m,memory=64Mi'
+```
 
 ## Image Using Digest
 
