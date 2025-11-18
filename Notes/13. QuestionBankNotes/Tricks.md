@@ -101,3 +101,32 @@ kubectl rollout restart deploy/api
 ```bash
 kubectl rollout undo deploy/api
 ```
+
+### API Server Issues
+
+Check if the apiserver pod is running or exited state:
+
+- Exited state: invalid manigest, wrong argument
+- Runnnig: connection issue to other component like issue with port, ip, url etc.
+
+- **API Server manifest yaml not correct (invalid yaml)**
+  - In this cases you won't be able to see the logs or even the pod it self for the kubeapiserver. \
+    - `/var/log/pods` # nothing
+    - `crictl logs` # nothing
+  - Solution Workflow:
+  - use kubelet logs `journalctl -xeu kubelet | grep apiserver`
+  - Error you will see `Could not process manifest file`
+- **API Server with wrong flag/wrong argument**
+  - Configure the Apiserver manifest with a new argument `--this-is-very-wrong` .
+  - This time you will be able to find the pod using `crictl ps -a` but in exited state.
+  - then use `crictl logs <pod-id>`
+- **Misconfigure ETCD connection in API Server**
+  - When you change the connection to etcd or any server eg: ` --etcd-servers=this-is-very-wrong` (instead --etcd-servers=127.0.0.1:2379)
+  - Or you will get this error when the `IP` or `Port` for the ETCD is wrong.
+  - In such situation the when you do `crictl ps` the apiseerver pod won't be in exited state like above sitaion it will be running
+  - So when you chek the logs `crictl logs <pod-id>` you wiill get error as
+    - `transport: Error while dialing: dial tcp 127.0.0.1:2379 operation was canceled`
+      - If you see this error that means `127.0.0.1:2379` look at the port and you know this belong to etcd so its etcd issues.
+      - And when its connection issue that means api server is not able to reach etcd.
+      - Sometime you get error as below again same issue the etcd server ip or port is wrong.
+    - `Error while dialing dial tcp: address this-is-very-wrong: missing port in address. Reconnecting...`
