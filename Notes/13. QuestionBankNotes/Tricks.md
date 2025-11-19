@@ -224,3 +224,9 @@ Use the admin kubeconfig to investigate and fix the RBAC issue.
 ```bash
 export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
+
+### Role and Role Binding and Service Account
+
+```bash
+k auth can-i get svc --as=system:serviceaccount:default:dev
+```
