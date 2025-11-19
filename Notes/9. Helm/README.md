@@ -3,13 +3,57 @@
   <h3>Helm</h3>
 </div>
 
+## Most Common and important
+
+⚡When you need find the hirarchy in yaml
+
+```bash
+helm show values <chart> | yq ea '.. | path | join(".")' | grep -i nodePort
+```
+
+Output of aobve command
+
+```bash
+server.service.nodePortHttp
+server.service.nodePortHttps
+```
+
+```bash
+helm show values repo/chart # Show the values that can be set for the chart
+helm show values repo/chart | less  # `/` for searching variable
+helm show values repo/chart | yq .   # Format the yaml
+
+helm status my-nginx-ingress -n nginx-ingress # Show the states of the deployment
+helm history my-nginx-ingress -n nginx-ingress # Shows the history for our deployment
+helm get manifest my-nginx-ingress -n nginx-ingress # View the generated Kubernetes manifests
+```
+
+Perform another upgrade to add a specifi values
+
+```bash
+helm install my-nginx-ingress nginx-stable/nginx-ingress \
+  --namespace nginx-ingress \
+  --set controller.replicaCount=2 \
+  --set controller.service.type=NodePort \
+  --set controller.service.httpPort.nodePort=30080 \
+  --set controller.service.httpsPort.nodePort=30443
+```
+
+Updating with custom values file
+
+```bash
+helm upgrade my-nginx-ingress nginx-stable/nginx-ingress \
+  --namespace nginx-ingress \
+  --values /root/nginx-values.yaml
+```
+
 ## 🔹 Helm Release
 
 A deployed instance of a Helm chart.
 
 ```bash
 helm install my-app bitnami/nginx     # Create release
-helm list                             # List releases
+helm list -A                         # List releases -A for all namespace
 helm uninstall my-app                 # Delete release
 ```
 
