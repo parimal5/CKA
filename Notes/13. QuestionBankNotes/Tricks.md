@@ -1,10 +1,27 @@
-### If you quickely need to recreate the static pods.
+### kubelet - If you quickely need to recreate the static pods.
 
 - use `sudo systemctl restart kubelet`
 
 This will recreate all the static pods.
 
+- ⚡The certification path of kubelet is
+
+```bash
+/var/lib/kubelet/pki/kubelet-client-current.pem
+```
+
+If the kubelet is failing with a cert error, FIRST check:
+
 ### One of the nodes is NotReady. Fix it.
+
+```bash
+cat /etc/kubernetes/kubelet.conf
+
+# Make sure that theses are pointint to correct variable
+client-certificate: /var/lib/kubelet/pki/kubelet-client-current.pem
+client-key: /var/lib/kubelet/pki/kubelet-client-current.pem
+
+```
 
 FIRST thing you should do for Node NotReady:
 
@@ -189,3 +206,21 @@ mkdir /var/lib/etcd
 ```
 
 - Afte doing this then you are ready to restore the backup
+
+### Broken kube-config
+
+Exam Statement
+
+```txt
+The default kubeconfig (~/.kube/config) is misconfigured.
+Use the admin kubeconfig located at /etc/kubernetes/admin.conf to complete this task.”
+
+# OR
+
+User developer cannot list pods in kube-system.
+Use the admin kubeconfig to investigate and fix the RBAC issue.
+```
+
+```bash
+export KUBECONFIG=/etc/kubernetes/admin.conf
+```
