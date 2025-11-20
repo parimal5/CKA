@@ -202,9 +202,7 @@ spec:
 
 - You already have commannd in docs for back and restore.
 - Workflow for restoring the db:
-  - First make sure `api-server` is stopped state.
-    - `BACKUP` = online OK
-    - `RESTORE` = offline required
+  - No need to stop `api-server`
   - `--data-dir=/var/lib/etcd` is where we need to resotre that data but make sure you either move out the data from this path or rename it to something else.
 
 ```bash
@@ -272,5 +270,45 @@ kubectl exec -it mypod -- nslookup kubernetes.default
 or
 
 kubectl run netshoot --image=busybox --rm -it -- nslookup kubernetes.default
-
 ```
+
+### Kubelet
+
+How do you know the kublet is down?
+
+```bash
+k get node #  Check if the node is in NotReady State
+```
+
+```bash
+systemctl status kublet
+```
+
+```bash
+journalctl -xeu kubelet
+```
+
+```bash
+find / | grep kubeadm
+
+# This will give you a file
+/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+# This file contain the info about the kubelet server(used by systemctl)
+```
+
+```bash
+# controlplane:~$ cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+# Note: This dropin only works with kubeadm and kubelet v1.11+
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
+```
+
+Base on the logs you can look though thises errors in differnet files.
