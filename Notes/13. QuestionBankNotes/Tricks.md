@@ -1,3 +1,12 @@
+Shortcur
+
+```bash
+export do="--dry-run=client -oyaml"
+
+# Usage
+k run $do nas --image nginx
+```
+
 ### kubelet - If you quickely need to recreate the static pods.
 
 - use `sudo systemctl restart kubelet`
@@ -247,3 +256,21 @@ sudo apt-get install -y kubelet='1.32.1-*' kubectl='1.32.1-*'
 ```
 
 ⚡This will not work until you use the flag `--allow-downgrade`
+
+## Rolling Update - Strategy `Recreate`
+
+```yaml
+strategy:
+  type: Recreate
+```
+
+### How to run a DNS Test in from POD
+
+```bash
+kubectl exec -it mypod -- nslookup kubernetes.default
+
+or
+
+kubectl run netshoot --image=busybox --rm -it -- nslookup kubernetes.default
+
+```
