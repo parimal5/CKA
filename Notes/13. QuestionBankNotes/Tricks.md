@@ -230,3 +230,20 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 ```bash
 k auth can-i get svc --as=system:serviceaccount:default:dev
 ```
+
+### Schedule Pod on Specific Node
+
+```bash
+nodeName: node01
+```
+
+### Cluster Upgrade
+
+If you have to downgrade the cluster like kubelet version then just running the
+
+```bash
+# Current: 1.34.1 --> 1.32.1
+sudo apt-get install -y kubelet='1.32.1-*' kubectl='1.32.1-*'
+```
+
+⚡This will not work until you use the flag `--allow-downgrade`
