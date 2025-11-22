@@ -272,7 +272,7 @@ or
 kubectl run netshoot --image=busybox --rm -it -- nslookup kubernetes.default
 ```
 
-### Kubelet
+## Kubelet
 
 How do you know the kublet is down?
 
@@ -312,3 +312,96 @@ ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELE
 ```
 
 Base on the logs you can look though thises errors in differnet files.
+
+## Pod Related Issues
+
+- Pod stuck in pending state
+  - check if the `nodeName` is specified on the pod or deployment
+
+## Logs
+
+- When you pull logs from `Pod` you can simple use command
+
+```bash
+kubectl logs <pod> -n namespace --all-container # for multiple contianers
+```
+
+But what if you need to get logs from deployment
+
+```bash
+kubectl logs deploy/<deploy-name>
+```
+
+> So you need to mention the type deploy/nginx-deploy
+
+## Ingress
+
+- Ingress create the NodePort for you at port 30080 or 30443 to expose you ingree resource to internet
+- so you can use the <IP>:30080 to reach to the ingress resoruce
+- then ingress will use the service of type ClusterIP to internally sent that traffic to the backend PODS.
+- `http://world.universe.mine:30080/europe/`
+- In the above example
+- `host`: `world.universe.mine:30080` # Don't get confused by this, think of this as complete URL.
+- `path`: `europe`
+- `service:port`: `<clusterIP-service>:80`
+- `rule`: `--rule=world.universe.mine:30080/europe:europe:80`
+- `world.universe.mine` --> This get resolve to nodePort IP when you add the entery in `/etc/hosts` file.
+
+## Network Policy
+
+```bash
+ports:
+- port: 53
+  protocol: TCP
+- port: 53
+  protocol: UDP
+```
+
+## PodAffininity and PodAntiAffinity
+
+- Suppose you ahve exisintg workload on POD A running on node01 (cloud be scheduled aby any means nodeSelector, or randomSchedule etc).
+- Now you need to deploy some new work and your reqirement is that I want my new workload/pod to be scheduled on the same node where my Pod A is placed.
+- Now to achive this senerio we use `PodAffininity`
+- Eg. Logging pods near the application pods
+
+- Same when you need to schedule the workload away from the exising pod then use `PodAntiAffinity`
+
+## Cluster Setup/Upgrade/Install/Initialize
+
+```bash
+kubeadm init --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=NumCPU,Mem --kubernetes-version=1.34.1
+```
+
+- Always check first if kubeadm, kubelet, kubectl version
+
+### Node join command
+
+```bash
+kubeadm token create --print-join-command
+```
+
+**OUTPUT**
+
+```bash
+kubeadm join 172.30.1.2:6443 --token 85ykxz.u04jyejt0ijbgpja --discovery-token-ca-cert-hash sha256:df0c776e06xxxxxxxx
+```
+
+### Read out certificate expiration
+
+```bash
+kubeadm certs check-expiration
+```
+
+### Renew the certs
+
+```bash
+kubeadm certs renew scheduler.conf
+oR
+kubeadm certs renew apiserver
+```
+
+## PortForwarding
+
+```bash
+kubectl port-forward svc/nginx-service 8080:80
+```
