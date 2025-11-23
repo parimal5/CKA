@@ -77,6 +77,8 @@ kubectl describe pod <name>  # must show Events
 kubectl get events --sort-by=.lastTimestamp
 kubectl get nodes -o wide
 kubectl describe node```
+
+kubectl get pod <pod-name> -oyaml | yq  # ⚡At the end of the manifest file you will see the detailed reson for the pod failure as comapre to describe
 ````
 
 Look for:
