@@ -30,6 +30,7 @@ cat /etc/kubernetes/manifests/kube-apiserver.yaml
 - **ClusterRole/ClusterRoleBinding**: Cluster-wide resources (nodes, PV, storage classes)
 
 **Important:** ClusterRole can also be used for namespaced resources to grant access across ALL namespaces.
+**Important:** ⚡When create the RBAC Rule alwas use the plural name
 
 ### View Existing Roles
 
@@ -90,6 +91,8 @@ kubectl auth can-i <verb> <resource>
 # Check if user can perform action
 kubectl auth can-i get deployments -n blue --as dev-user
 kubectl auth can-i create pods --as dev-user
+
+k auth can-i --list --as=system:serviceaccount:default:prod-sa
 
 # Alternative: Try actual commands
 kubectl get pods --as dev-user
