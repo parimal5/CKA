@@ -407,3 +407,11 @@ kubeadm certs renew apiserver
 ```bash
 kubectl port-forward svc/nginx-service 8080:80
 ```
+
+## ⚡HPA
+
+This is the imperative command to creat ethe HPA resource
+
+```bash
+kubectl autoscale deployment hpa-demo --cpu=50% --min=1 --max=5
+```
