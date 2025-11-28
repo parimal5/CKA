@@ -276,6 +276,8 @@ kubectl run netshoot --image=busybox --rm -it -- nslookup kubernetes.default
 
 ## Kubelet
 
+### Issue 1
+
 How do you know the kublet is down?
 
 ```bash
@@ -314,6 +316,28 @@ ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELE
 ```
 
 Base on the logs you can look though thises errors in differnet files.
+
+### Issue 2
+
+Sometime you see the node is not ready and you ssh to that node and see the kubelet is not running and you did systemctl start kubelet but and again chek the status but still the kubelet is not up and running.
+
+Below are the kubelet log you seee the message `203/EXEC` that means in the `/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf` file the EXEC command has wrong path
+
+```bash
+Nov 28 14:51:33 controlplane systemd[1]: kubelet.service: Main process exited, code=exited, status=203/EXEC
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░
+░░ An ExecStart= process belonging to unit kubelet.service has exited.
+░░
+░░ The process' exit code is 'exited' and its exit status is 203.
+```
+
+```bash
+# here the path should be /usr/bin/kubelet/
+ExecStart=/usr/bin/locals/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
+```
 
 ## Pod Related Issues
 
@@ -414,4 +438,45 @@ This is the imperative command to creat ethe HPA resource
 
 ```bash
 kubectl autoscale deployment hpa-demo --cpu=50% --min=1 --max=5
+```
+
+## CronJob
+
+Shortcut Memory Trick (works in exam)
+
+```bash
+min hour day month weekday
+```
+
+If something should run:
+
+- every minute → `put *`
+- every X minutes → `*/X`
+- every hour → put `minute=0`
+- daily → `minute=0, hour=0`
+
+### 🎯 Examples EXACTLY like CKA asks
+
+#### ✔ “Run every 2 minutes”
+
+```bash
+*/2 * * * *`
+```
+
+#### ✔ “Run daily”
+
+```bash
+0 0 * * *`
+```
+
+#### ✔ “Run every hour”
+
+```bash
+0 * * * *`
+```
+
+#### ✔ “Run every minute”
+
+```bash
+* * * * *`
 ```

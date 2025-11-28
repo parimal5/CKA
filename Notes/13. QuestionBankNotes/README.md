@@ -29,3 +29,13 @@ kubectl set image deployment/mydeploy mycontainer=myimage:v2
 kubectl annotate deployment/mydeploy kubernetes.io/change-cause="Updated to v2" --overwrite
 
 ```
+
+### Q2. Find the schedulable nodes ion the cluster and save the name and count in to the file. /root/nodes.txt
+
+> NOTE: Always check if the file is given already or you ahve to create it.
+
+Now the schedulable node are those that do not ahve taints effect `NoSchedule`
+
+```bash
+k get node -o yaml | grep taints -A 3
+```
