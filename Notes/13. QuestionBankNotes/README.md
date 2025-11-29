@@ -39,3 +39,42 @@ Now the schedulable node are those that do not ahve taints effect `NoSchedule`
 ```bash
 k get node -o yaml | grep taints -A 3
 ```
+
+#### Q3. Create a deployment/DaemonSet with lable app=prod, tier=db, dept=software.
+
+If question ask you to add labels or create object with label then you need to udpate the labels at all the places
+
+```yaml
+metadata.labels
+spec.selector.matchLabels
+spec.template.metadata.labels
+```
+
+Eg.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy
+  labels: # <----------------HERE
+    app: pod
+    dept: it
+    tier: db
+spec:
+  selector:
+    matchLabels: # <----------------HERE
+      app: pod
+      dept: it
+      tier: db
+  template:
+    metadata:
+      labels: # <----------------HERE
+        app: pod
+        dept: it
+        tier: db
+    spec:
+      containers:
+        - name: httpd
+          image: httpd:2.4-alpine
+```

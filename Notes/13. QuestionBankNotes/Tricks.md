@@ -339,6 +339,16 @@ Nov 28 14:51:33 controlplane systemd[1]: kubelet.service: Main process exited, c
 ExecStart=/usr/bin/locals/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
 ```
 
+### Issue 3
+
+If logs show “unknown flag” or parsing error
+Problem: Environment files (flags)
+
+```bash
+/var/lib/kubelet/kubeadm-flags.env
+/etc/default/local/kubelet
+```
+
 ## Pod Related Issues
 
 - Pod stuck in pending state
@@ -372,6 +382,7 @@ kubectl logs deploy/<deploy-name>
 - `service:port`: `<clusterIP-service>:80`
 - `rule`: `--rule=world.universe.mine:30080/europe:europe:80`
 - `world.universe.mine` --> This get resolve to nodePort IP when you add the entery in `/etc/hosts` file.
+- Make sure to use `pathType: Prefix` not `Exact` in ingress resource.
 
 ## Network Policy
 
