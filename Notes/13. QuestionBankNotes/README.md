@@ -231,7 +231,7 @@ helm histroy my-nginx
 
 _PSA applies at the namespace level_
 
-```bash
+```yaml
 # MODE must be one of `enforce`, `audit`, or `warn`.
 # LEVEL must be one of `privileged`, `baseline`, or `restricted`.
 pod-security.kubernetes.io/<MODE>: <LEVEL>
@@ -239,8 +239,150 @@ pod-security.kubernetes.io/<MODE>: <LEVEL>
 
 For every PSA question in the CKA exam, the solution is basically:
 
-- ✅ Add (or modify) the correct PSA label on the namespace.
+- ✅ Add (or modify) the correct PSA `label on the namespace`.
 
 ```bash
 kubectl label ns <ns> pod-security.kubernetes.io/enforce=restricted
+```
+
+### Q10: Deploy A CNI of you choice (the links are given for different CNI)
+
+Best Option to choose: Flannel and Calico.
+
+But there is sometime twist where the cluster default Pod Cidr Range is differne than the CNI you install so you need to update that default cidr range in CNI.
+
+how do you know your cluster POD IP Range - Either `logs` for the CNI PODs or check the `apiServer manifest`
+
+1. Flannel - Edit the ConfigMap (Recommended 1st Choice)
+
+```bash
+kubectl -n kube-flannel get configmap
+
+kubectl -n kube-flannel edit configmap kube-flannel-cfg
+
+```
+
+```json
+net-conf.json: |
+  {
+    "Network": "10.244.0.0/16",  # Match this to your current pod range
+    "Backend": {
+      "Type": "vxlan"
+    }
+  }
+```
+
+> Make sure after updating the config map you need to recreate the pod's (delete it it will get created automatically)
+
+2. Calico - Edit the DaemonSet Env Variable
+
+```bash
+kubectl -n kube-system edit ds calico-node
+```
+
+```yaml
+- name: CALICO_IPV4POOL_CIDR
+  value: "192.168.0.0/16"
+```
+
+Change this value to match the cluster’s Pod CIDR.
+
+### Q11. Create a secret with value passwd=mypass! and create a deployment that uses that secret as evnironment variable OR(add env variable to existing deployment)
+
+The easiest way to add secret/configmap as environment variable to new deployment or exising deployment using imperative way is below without opeaning yaml
+
+```bash
+k set env deploy/test-dep --from='secret/mysec'
+```
+
+It will add all the secrets in you secret as env variables
+
+```yaml
+- env:
+    - name: APITOKEN
+      valueFrom:
+        secretKeyRef:
+          key: apitoken
+          name: mysec
+    - name: NAME
+      valueFrom:
+        secretKeyRef:
+          key: name
+          name: mysec
+    - name: PASSWD
+      valueFrom:
+        secretKeyRef:
+          key: passwd
+          name: mysec
+```
+
+This will work only with deployment or ds etc not with standalone pod but you can do is
+
+```bash
+k set env pod/test-pod --from=secret/mysec --dry-run=client -oyaml > test.yml
+```
+
+```bash
+k replace --force -f test.yml
+```
+
+### Q12.Add the following Hel repository with the name `nginx-repo` `https://kubernetesway.github.io/my-helm-repo`. Install the helm chart from `nginx-repo` with Release name: `example-app` and version: `0.1.0`. And then update the version to `0.2.0`
+
+```bash
+helm repo add nginx-repo  https://kubernetesway.github.io/my-helm-repo
+
+helm repo list
+```
+
+Now we need to find out what charts are available in that repo
+
+```bash
+controlplane:~$ helm search repo nginx-repo
+
+# NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+# nginx-repo/nginx-chart  0.2.0           1.25            A Helm chart for NGINX
+```
+
+This will only show you latest version
+
+```bash
+controlplane:~$ helm search repo nginx-repo --versions
+
+# NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+# nginx-repo/nginx-chart  0.2.0           1.25            A Helm chart for NGINX
+# nginx-repo/nginx-chart  0.1.0           1.21            A Helm chart for NGINX
+```
+
+Now you see all the available versions so now you can use the below command to install specific version:
+
+```bash
+helm install example-repo nginx-repo/nginx-chart --version=0.1.0
+```
+
+Now we need to upgrade it:
+
+```bash
+helm upgrade example-repo nginx-repo/nginx-chart --version=0.2.0
+```
+
+Verify using:
+
+```bash
+helm history example-repo
+```
+
+**Extra**
+
+Now you need to deploy the helm chart with custom values.
+
+First we need to get the values for the helm chart
+
+```bash
+helm show value nginx-repo/nginx-chart --version=0.2.0 > custom-values.yml
+```
+
+Now vim custom-values.yml and then update the required values you need
+
+```bash
+helm install example-repo nginx-repo/nginx-chart -f custom-values.yml --version=0.2.0
 ```

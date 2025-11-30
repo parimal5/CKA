@@ -508,3 +508,28 @@ _LimitRange and ResourceQuota policies are enforced by Admission Controllers. So
 **ResourceQuota**: all the pod in the namespace can use max of 500m cpu there is no fix liimit which pod should use whateither one pod can use 400m and remming 100m bno matter but most they can use is 500m
 
 **LimitRange**: each pod has limit set what max they can use like 200m so each pod cannot cross taht 200m cpu limit
+
+### Environment Variable - Secret/ConfigMap
+
+👉 A. Use env: (single key OR renaming)
+
+If question wants to change the name of the env variable than the key
+
+```yaml
+env:
+  - name: PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysecret
+        key: passwd
+```
+
+👉 B. Use envFrom: (all keys at once, no renaming)
+
+here the name of the env will be PASSWD (capitalize version of the key)
+
+```yaml
+envFrom:
+  - secretRef:
+      name: mysecret
+```
