@@ -222,3 +222,25 @@ helm rollback my-nginx 1 -n nginx-helm
 ```bash
 helm histroy my-nginx
 ```
+
+### Q9.In the `kube-prod` namespace configure pod admission controllers to enfore the default resource `request` and `limit` for container The conditions: In absence of CPU/memory request/limit will default to cpu 200m and memory 100Mi for request cpu 400m and 200Mi memory for limit
+
+> So even though it says pod admission controllers but don't get confused with AdmissionControllers resource in k8s the limitRange or ResourceQuota and many otehr are know as AdmissionContrl enforser's
+
+**Extra: There is another admission controllers Enforcer called `Pod Security Admission`**
+
+_PSA applies at the namespace level_
+
+```bash
+# MODE must be one of `enforce`, `audit`, or `warn`.
+# LEVEL must be one of `privileged`, `baseline`, or `restricted`.
+pod-security.kubernetes.io/<MODE>: <LEVEL>
+```
+
+For every PSA question in the CKA exam, the solution is basically:
+
+- ✅ Add (or modify) the correct PSA label on the namespace.
+
+```bash
+kubectl label ns <ns> pod-security.kubernetes.io/enforce=restricted
+```
