@@ -1,4 +1,10 @@
-Shortcur
+# Keep in mind:
+
+- Always validate your results. If you create pod make sure it get created correctely and running and in correct namespace.
+- Sometime they ask you to store the result in some file like logs, eventsm, yaml, or sometime they ask to store the command you use to get that result, So always read the question carefully.
+- When you write the the command in exam you will use shortcut as `k` and if the quesiton ask you to store the command in a file then make sure you do not store the command with alias `k` store full command using `kubectl`
+
+Shortcut
 
 ```bash
 export do="--dry-run=client -oyaml"
