@@ -40,7 +40,7 @@ Now the schedulable node are those that do not ahve taints effect `NoSchedule`
 k get node -o yaml | grep taints -A 3
 ```
 
-#### Q3. Create a deployment/DaemonSet with lable app=prod, tier=db, dept=software.
+### Q3. Create a deployment/DaemonSet with lable app=prod, tier=db, dept=software.
 
 If question ask you to add labels or create object with label then you need to udpate the labels at all the places
 
@@ -77,4 +77,64 @@ spec:
       containers:
         - name: httpd
           image: httpd:2.4-alpine
+```
+
+### Q4: A `multi-container` pod is deployed in the default namespace with 2 contaienr name `c1` and `c2`. You have to get the logs and container id for the container named `c2` in the pod. And then restart the container `c2` and write the events to `root/events.log` file. Store logs in `logs.txt` and containerID in `containerID.txt`
+
+**Step 1:** Grab the logs of the container c2
+
+```bash
+k logs multi-container -c c2 > logs.txt
+```
+
+**Step 2:** Grab the ID of the container
+
+```bash
+crictl ps
+
+echo "<ID>" > containerID.txt
+```
+
+**Step 3:** Restart the container
+
+```bash
+crictl ps # Grab the ID of the container
+
+crictl stop <ID> # Stop the container
+
+crictl rm <ID> # Remove the container
+
+# The kubelet will recreate that container.
+```
+
+**Step 4:** Store the Events
+
+```bash
+k get events --sort-by=.metadata.creationTimestamp > root/events.log
+```
+
+**Extra**: Sometime they ask you to store the events only for that pod instead of all the pod
+
+```bash
+k get events --sort-by=.metadata.creationTimestamp --field-selector involvedObject.name=multi-container
+```
+
+**Extra**: Sometime they will not ask you to store the event or logs but the commands you use to grab the logs or events so read the question carefully
+
+### Q5: List all the pod in safari namespace and then sort by creation order.
+
+```bash
+k get pod -n safari --sort-by=.metadata.creationTimestamp
+```
+
+**Bonus:** If we need to print in reverse order or decending order the use `tac` command
+
+```bash
+k get pod -n safari --sort-by=.metadata.creationTimestamp | tac
+```
+
+**Bonus:** Sort the pod by `priority`
+
+```bash
+k get pod -n safari --sort-by=.spec.priority
 ```
