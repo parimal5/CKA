@@ -578,7 +578,7 @@ tail -f
 | shared within the pod | **emptyDir**   |
 | temporary storage     | **emptyDir**   |
 
-### Test Commnetion to Service and POD
+### Test Connetion to Service and POD
 
 ```bash
 kubectl run test-nslookup --image=busybox:1.28 --rm -it -- nslookup nginx-resolver-service
@@ -587,3 +587,8 @@ kubectl run test-nslookup --image=busybox:1.28 --rm -it -- nslookup nginx-resolv
 ```bash
 kubectl run test-nslookup --image=busybox:1.28 --rm -it -- nslookup <POD-IP.namespace.pod>
 ```
+
+⚡⚡But the thing is the pod IP is suppose 172.8.0.1 so the command wont be `172.8.0.1.default.pod`
+it would be `172-8-0-1.default.pod`
+
+So you have to replace `.` with `-` in nslookup command

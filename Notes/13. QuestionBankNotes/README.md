@@ -386,3 +386,9 @@ Now vim custom-values.yml and then update the required values you need
 ```bash
 helm install example-repo nginx-repo/nginx-chart -f custom-values.yml --version=0.2.0
 ```
+
+```bash
+helm get manifest <REAEASE_NAME>
+```
+
+this will giove you final generated manifest so if you need to check which image the manifest is using then you can us then and then do grep image
