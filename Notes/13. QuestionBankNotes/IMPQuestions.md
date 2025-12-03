@@ -33,3 +33,56 @@ k exec -n frontend -it my-fronted-pod -- curl -m 5 http://service.namespace:port
 ```
 
 `-m 5` will timeout in 5 sec so you won't waste time in CKA
+
+### Q2.ETCD Backup and Restore
+
+When you do the restore and if the question ask you to resore in diffenret data dir like `/var/lib/etcd-backup` then you need to update the etcd.yaml to this new data-dir, so only thing you will change is the volume
+
+### Q3 Join the Worker Node.
+
+```bash
+kubeadm token create --print-join-command
+```
+
+### Create a new user called john. Grant him access to the cluster using a `csr` named `john-developer`. Create a role developer which should grant John the permission to `create, list, get, update and delete pods` in the `development` namespace . The private key exists in the location: `/root/CKA/john`.key and csr at `/root/CKA/john.csr`. Important Note: As of kubernetes 1.19, the `CertificateSigningRequest` object expects a `signerName`.
+
+Please refer to the documentation to see an example. The documentation tab is available at.
+
+[Issue a Certificate for a Kubernetes API Client Using A CertificateSigningRequest](https://kubernetes.io/docs/tasks/tls/certificate-issue-client-csr/)
+
+Step 1: The question will give you csr and key so base64 encode it so you can use it in CertificateSigningRequest Object
+
+```bash
+# Command available in documentation
+cat myuser.csr | base64 | tr -d "\n"
+```
+
+Step 2: Create the CSR Reqsource
+
+```yaml
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: myuser # example
+spec:
+  request: <OUTPUT FROM STEP 1>
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+    - client auth
+# kubectl apply -f john-csr.yaml
+```
+
+Approve the CSR Request:
+
+```bash
+kubectl certificate approve myuser
+```
+
+If question ask you to get the certifica exprted
+
+```bash
+# Command available in documentation
+kubectl get csr myuser -o jsonpath='{.status.certificate}'| base64 -d > myuser.crt
+```
+
+Finally you can create the role and rolebinding and use the --user=john in your binding

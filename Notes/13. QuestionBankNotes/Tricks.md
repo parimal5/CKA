@@ -13,6 +13,12 @@ export do="--dry-run=client -oyaml"
 k run $do nas --image nginx
 ```
 
+Run the command on node01 without logging
+
+```bash
+ssh node01 -- crictl ps
+```
+
 ### kubelet - If you quickely need to recreate the static pods.
 
 - use `sudo systemctl restart kubelet`
@@ -204,6 +210,12 @@ spec:
 ```yaml
 spec:
   podSelector: {} # This will target all the resources in the namespace.
+```
+
+Valdiation if the NP is working you can try to ping the pod from the blocked pod and it will hang
+
+```bash
+kubectl exec -it <pod> -- curl <pod-ip>:<port>
 ```
 
 ### ETCD Backup and Restore
@@ -532,4 +544,46 @@ here the name of the env will be PASSWD (capitalize version of the key)
 envFrom:
   - secretRef:
       name: mysecret
+```
+
+### Linux Commands to know and tips:
+
+When quesiton as you to run some command continously in a busybox pod then use the while loop remember th syntax
+
+```bash
+while true; do <command>; sleep 2; done
+# Eg.
+
+while true; do date >> /var/log/shared/date.log; sleep 1; done
+
+```
+
+When we want to capture logs to a file remember the difference between `>` vs `>>`
+
+- `>` : Overwrite
+- `>>`: Append
+
+If question ask you to read the logs from the file and you ahve busybox container if you read using cat comand then it will just print the resule and container will exit and will be inn crashloop backoff error. So instead us
+
+```bash
+tail -f
+```
+
+### If Question wants you to use the `emptyDir` it can use the below keyword
+
+| Exam phrase           | Correct volume |
+| --------------------- | -------------- |
+| non-persistent        | **emptyDir**   |
+| ephemeral             | **emptyDir**   |
+| shared within the pod | **emptyDir**   |
+| temporary storage     | **emptyDir**   |
+
+### Test Commnetion to Service and POD
+
+```bash
+kubectl run test-nslookup --image=busybox:1.28 --rm -it -- nslookup nginx-resolver-service
+```
+
+```bash
+kubectl run test-nslookup --image=busybox:1.28 --rm -it -- nslookup <POD-IP.namespace.pod>
 ```
