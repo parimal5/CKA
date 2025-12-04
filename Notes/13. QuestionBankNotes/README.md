@@ -392,3 +392,78 @@ helm get manifest <REAEASE_NAME>
 ```
 
 this will giove you final generated manifest so if you need to check which image the manifest is using then you can us then and then do grep image
+
+### Q13. Install ArgoCD ion Cluster: Add the official Argo CD Helm repository with the name `argo`. The Argo CD CRD's have already been pre-installed in the clsuter. Generte a Helm template of the ArgoCD Helm chart `version 7.7.3` for the `argocd` namespace and save to `argo-helm.yaml`. Configure the chart to `not install CRDs`. Install ArgoCD using Helm with release name `argocd` using the same version as above and configure as used in the `template 7.7.3`. Install it in the `argocd namespace` and configre it `not using to install CDRs`, you do not need to configure the access to ARgo CDS server UI
+
+```bash
+helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
+
+kubectl create namespace argocd
+
+helm template argocd argo/argo-cd \
+  --namespace argocd \
+  --version 7.7.3 \
+  --set crds.install=false > argo-helm.yaml
+
+helm install argocd argo/argo-cd \
+  --namespace argocd \
+  --version 7.7.3 \
+  --set crds.install=false
+```
+
+### Q13. Create a headless service
+
+Headless services is notheing but a service with ClsuterIP set to `None`
+
+### Q14. CoreDNS issues:
+
+- ⚡⚡The CoreDNS config file is stoired as ConfigMap
+- So if you need to topubleshhot the CoreDNS issue via config map then make sure to check the Configmap
+
+- Check ClusterIP of the DNS Service
+
+```bash
+kubectl -n kube-system get svc kube-dns
+```
+
+> clusterIP: 10.96.0.10 # Must match cluster DNS IP defined in kubelet config
+
+- Ensure cluster kubelet is using correct DNS IP
+
+```bash
+cat /var/lib/kubelet/config.yaml | grep clusterDNS -A1
+```
+
+> kube-dns ClusterIP from above
+
+- Test DNS from inside a pod
+  - Even if CoreDNS is running, DNS may be broken for workloads.
+
+```bash
+kubectl run dns-test --image=busybox:1.28 --restart=Never --rm -it -- nslookup kubernetes.default
+```
+
+| Issue                   | Command to Check                             | Fix                                 |
+| ----------------------- | -------------------------------------------- | ----------------------------------- |
+| CrashLoopBackOff        | `kubectl logs -n kube-system deploy/coredns` | Fix Corefile ConfigMap              |
+| Pending                 | `kubectl describe pod`                       | Remove taints / nodeSelector        |
+| DNS timeout             | test with busybox                            | Fix kube-dns Service or kube-proxy  |
+| Wrong DNS IP            | `grep clusterDNS`                            | Fix kubelet config                  |
+| CNI broken              | CNI pods not running                         | Reapply network plugin              |
+| Wrong upstream resolver | check Corefile                               | Update `forward . /etc/resolv.conf` |
+
+### Q15.Clsuter workload need to resolve a custom domain internally. COnfigure ConreDNS such that any DNS query for `myapp.internal` returns the IP address `10.10.10.10`. After configartion, pod in the clsuter should be able to resolve `myapp.internal` to `10.10.10.10`
+
+- So any changes to configation of core DNS need to be done via `ConfigMap`.
+- in coreDNS config ma-p tehre is `Corefile:`
+- you can add you own custoim domain anythere add the below block for the custom domin
+
+```json
+hosts {
+  10.10.10.10 myapp.internal
+  fallthrough # optional just say ingore if fail
+}
+```
+
+delete the coredns pod and kublet recreate it

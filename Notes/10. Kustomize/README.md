@@ -187,7 +187,7 @@ What it does: Apply partial YAML patches to modify resources.
 # kustomization.yaml
 
 patches:
-  - patch.yaml
+  path: patch.yaml
 ```
 
 ```yaml

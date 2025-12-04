@@ -86,3 +86,56 @@ kubectl get csr myuser -o jsonpath='{.status.certificate}'| base64 -d > myuser.c
 ```
 
 Finally you can create the role and rolebinding and use the --user=john in your binding
+
+### Autoscale Imperative
+
+```yaml
+# controlplane:~$ k autoscale deploy cpu-demo --min 1 --max 5 --cpu=50 --dry-run=client -oyaml ##
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cpu-demo
+spec:
+  maxReplicas: 5
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageValue: 50m
+          type: AverageValue  <--------------------- When cpu = 50
+      type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cpu-demo
+status:
+  currentMetrics: null
+  desiredReplicas: 0
+```
+
+```yaml
+# controlplane:~$ k autoscale deploy cpu-demo --min 1 --max 5 --cpu=50% --dry-run=client -oyaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cpu-demo
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 50
+        type: Utilization --------------------- When cpu = 50%
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cpu-demo
+status:
+  currentMetrics: null
+  desiredReplicas: 0
+controlplane:~$
+```

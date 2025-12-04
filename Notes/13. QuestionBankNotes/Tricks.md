@@ -592,3 +592,58 @@ kubectl run test-nslookup --image=busybox:1.28 --rm -it -- nslookup <POD-IP.name
 it would be `172-8-0-1.default.pod`
 
 So you have to replace `.` with `-` in nslookup command
+
+### Helm
+
+🔍 Analogy to Understand Clearly
+`helm template`
+
+➡️ “Show me what Helm would install.”
+
+`helm install`
+
+➡️ “Okay Helm, install it.”
+
+`helm get manifest`
+
+➡️ “Show me what Helm actually installed.”
+
+If you want to install the char directly fromthe repo the use the command
+
+```bash
+helm install <RELEASE> <REPO>/<CHART>
+```
+
+But if you want to install you local chart whihc you pulled usoing `helm pull` command
+
+then
+
+```bash
+helm install <RELEASE> ./PATH
+```
+
+### Storage Class
+
+- The Whole point of using storage class is to make the PV Provisioning Dynamic.
+- But if you need some custom values, like if question ask you to add node affinity to storage then you need to manually create the PV
+
+### Service Port and Target Port and curl command
+
+- containerPort is cosmetic, the contaienr alwas listen on the port Exposed by image.
+- Nginx listen on port `80`
+- If you do NOT specify a port in the curl command:
+
+```bash
+curl http://purple-svc-cka27-trb
+```
+
+Then curl uses HTTP default port = 80.
+➡️ You are actually curling → `purple-svc-cka27-trb:80`
+
+So if you have service port set to something else thatn 80 then you ahve to mention that in curl command
+
+```bash
+curl http://purple-svc-cka27-trb:8080
+```
+
+> so the curl will not defualt to port 80
