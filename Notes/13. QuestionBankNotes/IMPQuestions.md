@@ -173,3 +173,14 @@ You must provide IPs manually →
 So you must create an `EndpointsSlice` object.
 
 If the external serivce is another node then use the `ping` command `ping nodename` to get the ip addresss or just run ip addr show on that node.
+
+### Q Search for the bitbucket repo for nginx and store it in the /root/repo-url.txt.
+
+```bash
+helm search hub nginx --list-repo-url | grep bitnami
+
+# OUTPUT:
+https://artifacthub.io/packages/helm/bitnami/nginx 22.3.3 1.29.3 NGINX Open Source is a web server that can be a. https://charts.bitnami.com/bitnami
+```
+
+The first is not the URL the last colum is the repo URL: `https://charts.bitnami.com/bitnami`
