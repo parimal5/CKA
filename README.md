@@ -12,7 +12,12 @@ openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text
 
 helm show values <chart> | yq ea '.. | path | join(".")' | grep -i nodePort
 
+```
 
+## How to restart the Deployment or Daemonset
+
+```bash
+kubectl rollout restart daemonset/kube-flannel-ds -n kube-flannel
 ```
 
 # 1. Quick reference — MUST MEMORIZE

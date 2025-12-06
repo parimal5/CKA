@@ -139,3 +139,37 @@ status:
   desiredReplicas: 0
 controlplane:~$
 ```
+
+### When a CKA question asks you to configure system parameters like:
+
+```conf
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+```
+
+Create a config file:
+
+```bash
+sudo vi /etc/sysctl.d/k8s.conf
+```
+
+Add the above parameters to this file
+
+And do
+
+```bash
+sudo sysctl --system
+```
+
+> This loads ALL files under /etc/sysctl.d/, /usr/lib/sysctl.d/, etc.
+
+### We have an external webserver running on student-node which is exposed at port 9999. We have created a service called external-webserver-cka03-svcn that can connect to our local webserver from within the kubernetes cluster3, but at the moment, it is not working as expected. Fix the issue so that other pods within cluster3 can use external-webserver-cka03-svcn service to access the webserver.
+
+`“External = EndpointsSlice“`
+
+If the backend is NOT a Kubernetes Pod →
+You must provide IPs manually →
+So you must create an `EndpointsSlice` object.
+
+If the external serivce is another node then use the `ping` command `ping nodename` to get the ip addresss or just run ip addr show on that node.

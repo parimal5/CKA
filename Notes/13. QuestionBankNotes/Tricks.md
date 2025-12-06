@@ -647,3 +647,22 @@ curl http://purple-svc-cka27-trb:8080
 ```
 
 > so the curl will not defualt to port 80
+
+### POD OOMKill Error
+
+If a pod is getting `OOMKilled`, the most common and correct solution is to increase the memory limit, NOT reduce the request.
+
+Note: If `OOMKilled` still happens, increase the memory limit in increments of `256Mi(256Mi -> 512Mi -> 768Mi -> 1Gi)` until stable.
+
+### Service Pod selector
+
+if the quesion do not ask you to add the label the do not add it
+
+you can use the pod selecor
+
+```yaml
+selector:
+  matchNames:
+    - pod-23
+    - pod-21
+```
