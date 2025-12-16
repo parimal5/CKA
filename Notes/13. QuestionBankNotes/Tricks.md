@@ -154,8 +154,8 @@ kubectl rollout undo deploy/api
 
 Check if the apiserver pod is running or exited state:
 
-- Exited state: invalid manigest, wrong argument
-- Runnnig: connection issue to other component like issue with port, ip, url etc.
+- Exited state: invalid manifest, wrong argument
+- Runnning: connection issue to other component like issue with port, ip, url etc.
 
 - **API Server manifest yaml not correct (invalid yaml)**
   - In this cases you won't be able to see the logs or even the pod it self for the kubeapiserver. \
@@ -654,15 +654,14 @@ If a pod is getting `OOMKilled`, the most common and correct solution is to incr
 
 Note: If `OOMKilled` still happens, increase the memory limit in increments of `256Mi(256Mi -> 512Mi -> 768Mi -> 1Gi)` until stable.
 
-### Service Pod selector
+## Which Networking (or CNI Plugin) is configured and where is its config file?
 
-if the quesion do not ask you to add the label the do not add it
+```bash
+➜ root@cka8448:~# find /etc/cni/net.d/
+/etc/cni/net.d/
+/etc/cni/net.d/.kubernetes-cni-keep
+/etc/cni/net.d/10-weave.conflist
+/etc/cni/net.d/87-podman-bridge.conflist
 
-you can use the pod selecor
-
-```yaml
-selector:
-  matchNames:
-    - pod-23
-    - pod-21
+➜ root@cka8448:~# cat /etc/cni/net.d/10-weave.conflist
 ```
